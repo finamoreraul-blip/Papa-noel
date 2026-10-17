@@ -3,476 +3,253 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Papa Noel PRO - Generador de Video IA</title>
+<title>Papa Noel Video Real</title>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', system-ui, Arial, sans-serif;
-    background: radial-gradient(circle at 20% 10%, #1a6b4a 0%, #0b3d2e 40%, #06231a 100%);
-    color: white;
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-  header {
-    background: linear-gradient(90deg, #d62828, #a71e1e);
-    padding: 18px;
-    text-align: center;
-    border-bottom: 4px solid gold;
-  }
-  header h1 { color: gold; font-size: 30px; text-shadow: 2px 2px 0 #000; }
-  header p { color: #ffe; font-size: 15px; margin-top: 4px; }
-  .container { max-width: 700px; margin: 20px auto; padding: 0 15px; }
-  .card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  }
-  .card h2 { color: gold; font-size: 20px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 8px; }
-  label { display: block; font-weight: bold; margin: 12px 0 5px 0; color: #ffe; font-size: 14px; }
-  input[type="text"], textarea, select {
-    width: 100%; border-radius: 12px; border: 2px solid rgba(255,215,0,0.4);
-    padding: 12px; font-size: 16px; background: rgba(0,0,0,0.3); color: white; outline: none;
-  }
-  textarea { height: 110px; resize: vertical; }
-  input[type="file"] { width: 100%; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 12px; color: white; }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; }
-  .row > div { flex: 1; min-width: 140px; }
-  .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-  .checkbox-group label {
-    background: rgba(0,0,0,0.3); padding: 8px 14px; border-radius: 20px; cursor: pointer;
-    border: 1px solid rgba(255,215,0,0.3); font-weight: normal; margin: 0;
-  }
-  .checkbox-group input { margin-right: 5px; }
-  .btn {
-    width: 100%; background: linear-gradient(90deg, gold, #ffaa00); color: black;
-    border: none; padding: 16px; font-size: 18px; font-weight: 900; border-radius: 30px;
-    cursor: pointer; margin-top: 15px; box-shadow: 0 4px 15px rgba(255,215,0,0.4);
-  }
-  .btn-secondary { background: #d62828; color: white; }
-  .btn-whatsapp { background: #25D366; color: white; }
-  .btn:active { transform: scale(0.98); }
-  #previewImg { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 4px solid gold; display: block; margin: 10px auto; }
-  #estado { text-align: center; margin-top: 15px; font-size: 16px; min-height: 24px; color: gold; font-weight: bold; }
-  .progress { width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-top: 10px; display: none; }
-  .progress-bar { height: 100%; background: gold; width: 0%; transition: width 0.3s; }
-  #resultado { display: none; text-align: center; }
-  #videoFinal { width: 100%; max-width: 500px; border-radius: 20px; border: 4px solid gold; background: black; margin: 10px auto; display: block; }
-  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
-  .stat { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; text-align: center; }
-  .stat strong { color: gold; display: block; font-size: 18px; }
-  .stat span { font-size: 12px; color: #ccc; }
-  footer { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
-  .badge { background: gold; color: black; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    * { box-sizing: border-box; }
+  body { margin:0; font-family: Arial, sans-serif; background:#121212; color:white; display:flex; justify-content:center; padding:20px; }
+  .caja { width:100%; max-width:460px; }
+  h1 { text-align:center; font-size:22px; }
+  p.sub { text-align:center; color:#999; font-size:14px; margin-top:-5px; }
+  label { display:block; margin-top:15px; font-size:14px; color:#ccc; }
+  input, textarea { width:100%; padding:12px; border-radius:12px; border:1px solid #333; background:#1e1e1e; color:white; font-size:16px; margin-top:5px; }
+  textarea { height:90px; }
+  input[type="file"] { background:#1e1e1e; padding:10px; }
+  button { width:100%; padding:16px; border:none; border-radius:30px; background:#d62828; color:white; font-size:18px; font-weight:bold; margin-top:20px; cursor:pointer; }
+  button.sec { background:#25D366; }
+  #estado { text-align:center; margin-top:12px; color:gold; font-weight:bold; min-height:20px; }
+  #videoFinal { width:100%; border-radius:20px; margin-top:15px; display:none; background:black; }
 </style>
 </head>
 <body>
+<div class="caja">
+  <h1>🎅 Papa Noel Videollamada</h1>
+  <p class="sub">Voz tipo YouTube incluida. Escribis y generas.</p>
 
-<header>
-  <h1>🎅 PAPA NOEL PRO STUDIO 🎬</h1>
-  <p>Convertí tu foto en un video con IA hablando de verdad. Todo en esta página.</p>
-</header>
+  <label>Nombre</label>
+  <input type="text" id="nombre" placeholder="Santiago">
 
-<div class="container">
+  <label>Mensaje</label>
+  <textarea id="mensaje" placeholder="Hola, soy Papa Noel..."></textarea>
 
-  <div class="card">
-    <h2>1. Tu Foto de Papá Noel <span class="badge">PRO</span></h2>
-    <img src="santa.png" id="previewImg" alt="Vista previa">
-    <label>Cambiar foto:</label>
-    <input type="file" id="fileInput" accept="image/*" onchange="cargarFoto(event)">
-    <div class="tip" style="font-size: 13px; color: #ffcc66; margin-top: 8px;">Si no subís nada, usa santa.png de la carpeta</div>
-  </div>
+  <label>Voz descargada de YouTube (opcional). Si no subis nada, uso la voz que ya cree adentro.</label>
+  <input type="file" id="audioFile" accept="audio/*">
 
-  <div class="card">
-    <h2>2. El Mensaje del Video</h2>
-    <label>Nombre del niño/a:</label>
-    <input type="text" id="nombreInput" placeholder="Ej: Santiago, Valentina, Benja">
-    
-    <label>Mensaje que dirá Papá Noel:</label>
-    <textarea id="textoMensaje" placeholder="Ej: Hola [nombre], soy Papá Noel. Vi que te portaste muy bien este año, por eso te traje muchos regalos. Te mando un abrazo enorme y Feliz Navidad!"></textarea>
-
-    <div class="row">
-      <div>
-        <label>Velocidad de voz:</label>
-        <select id="velocidad">
-          <option value="0.85">Muy lento y grave</option>
-          <option value="0.90" selected>Normal Papá Noel</option>
-          <option value="1.0">Rápido</option>
-        </select>
-      </div>
-      <div>
-        <label>Tono de voz:</label>
-        <select id="tono">
-          <option value="0.85" selected>Grave de Papá Noel</option>
-          <option value="0.95">Un poco más agudo</option>
-          <option value="0.75">Súper grave</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>3. Efectos del Video PRO</h2>
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="chkMusica" checked> 🎵 Música Jingle Bells</label>
-      <label><input type="checkbox" id="chkNieve" checked> ❄️ Nieve cayendo</label>
-      <label><input type="checkbox" id="chkLuces" checked> ✨ Luces navideñas</label>
-      <label><input type="checkbox" id="chkSubtitulos" checked> 💬 Subtítulos</label>
-      <label><input type="checkbox" id="chkRisa" checked> 😂 Risa al final</label>
-      <label><input type="checkbox" id="chkEco" checked> 🔊 Eco de taller</label>
-    </div>
-    <div class="row" style="margin-top: 15px;">
-      <div>
-        <label>Color de fondo:</label>
-        <select id="colorFondo">
-          <option value="#0b3d2e">Verde Noche</option>
-          <option value="#1a1a2e">Azul Noche</option>
-          <option value="#2d0505">Rojo Navidad</option>
-          <option value="#000">Negro Lujo</option>
-        </select>
-      </div>
-      <div>
-        <label>Duración intro:</label>
-        <select id="introDur">
-          <option value="1">1 segundo</option>
-          <option value="2" selected>2 segundos</option>
-          <option value="3">3 segundos</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>4. Generar Video con IA</h2>
-    <p style="font-size: 14px; color: #ddd;">La página misma convierte la foto en video. No necesitas Hedra ni nada externo. Solo necesitas internet para la voz.</p>
-    <button class="btn" onclick="generarVideoPro()">🎬 GENERAR VIDEO PRO AHORA</button>
-    <div id="estado"></div>
-    <div class="progress" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
-  </div>
-
-  <div class="card" id="resultado">
-    <h2>✅ Tu Video PRO está listo</h2>
-    <video id="videoFinal" controls playsinline></video>
-    <div class="stats">
-      <div class="stat"><strong id="statDur">0s</strong><span>Duración</span></div>
-      <div class="stat"><strong>1080p</strong><span>Calidad</span></div>
-      <div class="stat"><strong id="statSize">0 MB</strong><span>Tamaño</span></div>
-    </div>
-    <button class="btn btn-secondary" onclick="descargarVideo()">⬇ DESCARGAR VIDEO</button>
-    <button class="btn btn-whatsapp" onclick="compartirWhatsApp()">📲 MANDAR POR WHATSAPP</button>
-    <button class="btn" style="background: #444; color: white;" onclick="volverPanel()">🔄 Hacer otro saludo</button>
-  </div>
-
+  <button onclick="generar()">▶ GENERAR VIDEO</button>
+  <div id="estado"></div>
+  <video id="videoFinal" controls playsinline></video>
+  <button id="btnDescargar" class="sec" style="display:none;" onclick="descargar()">⬇ DESCARGAR VIDEO</button>
 </div>
 
-<canvas id="canvasVideo" width="1080" height="1080" style="display:none"></canvas>
-
-<footer>Papa Noel PRO Studio v4.0 | Hecho para que cada saludo sea mágico</footer>
+<canvas id="canvas" width="1080" height="1080" style="display:none"></canvas>
 
 <script>
-const canvas = document.getElementById('canvasVideo');
+const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let santaImg = new Image();
 santaImg.src = 'santa.png';
 let audioCtx;
 let videoBlob = null;
 let videoUrl = null;
-let nieveParticulas = [];
-let lucesArray = [];
 
-// Inicializar nieve y luces
-for (let i = 0; i < 120; i++) {
-  nieveParticulas.push({ x: Math.random()*1080, y: Math.random()*1080, r: Math.random()*4+1, velocidad: Math.random()*2+1, opacidad: Math.random()*0.8+0.2 });
-}
-for (let i = 0; i < 20; i++) {
-  lucesArray.push({ x: Math.random()*1080, y: Math.random()*150, color: ['red','gold','green','white','blue'][Math.floor(Math.random()*5)], fase: Math.random()*Math.PI*2 });
-}
+function setEstado(t){ document.getElementById('estado').innerText = t; }
 
-function cargarFoto(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  santaImg = new Image();
-  santaImg.src = url;
-  document.getElementById('previewImg').src = url;
-}
+async function generar() {
+  let nombre = document.getElementById('nombre').value.trim();
+  let texto = document.getElementById('mensaje').value.trim();
+  if (!texto) { alert('Escribi un mensaje'); return; }
+  if (nombre) texto = 'Hola ' + nombre + '. ' + texto;
 
-function setEstado(msg, progreso) {
-  document.getElementById('estado').innerText = msg;
-  if (progreso !== undefined) {
-    document.getElementById('progressWrap').style.display = 'block';
-    document.getElementById('progressBar').style.width = progreso + '%';
-  }
-}
-
-async function generarVideoPro() {
-  let nombre = document.getElementById('nombreInput').value.trim();
-  let texto = document.getElementById('textoMensaje').value.trim();
-  if (!texto) { alert('Escribí un mensaje'); return; }
-  if (nombre) texto = texto.split('[nombre]').join(nombre);
-  
-  const velocidad = parseFloat(document.getElementById('velocidad').value);
-  const tono = parseFloat(document.getElementById('tono').value);
-  const conMusica = document.getElementById('chkMusica').checked;
-  const conNieve = document.getElementById('chkNieve').checked;
-  const conLuces = document.getElementById('chkLuces').checked;
-  const conSubtitulos = document.getElementById('chkSubtitulos').checked;
-  const conRisa = document.getElementById('chkRisa').checked;
-  const conEco = document.getElementById('chkEco').checked;
-  const colorFondo = document.getElementById('colorFondo').value;
-  const introSeg = parseInt(document.getElementById('introDur').value);
-
-  setEstado('⏳ Preparando voz de Papá Noel con IA...', 10);
-  document.getElementById('resultado').style.display = 'none';
+  setEstado('Preparando voz tipo YouTube...');
+  document.getElementById('videoFinal').style.display = 'none';
+  document.getElementById('btnDescargar').style.display = 'none';
 
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
 
-  let fraseCompleta = 'Ho ho! ' + texto;
-  if (conRisa) fraseCompleta += ' Jo jo!';
+  let audioBuffer = null;
+  let audioFile = document.getElementById('audioFile').files[0];
+
+  // 1. Si el usuario subio una voz de YouTube, USAR ESA
+  if (audioFile) {
+    try {
+      const ab = await audioFile.arrayBuffer();
+      audioBuffer = await audioCtx.decodeAudioData(ab);
+      setEstado('Usando tu voz de YouTube...');
+    } catch(e) {
+      setEstado('No se pudo leer tu audio, uso la voz creada');
+      audioFile = null;
+    }
+  }
+
+  // 2. Si no subio nada, CREAR la voz adentro como las de YouTube
+  if (!audioBuffer) {
+    try {
+      let frase = 'Ho ho! ' + texto + ' Ho ho! Feliz Navidad!';
+      // Voz de referencia YouTube: Google español, grave y lenta
+      const urlVoz = 'https://api.streamelements.com/kappa/v2/speech?voice=Google%20espa%C3%B1ol&text=' + encodeURIComponent(frase);
+      const res = await fetch(urlVoz);
+      const blob = await res.blob();
+      const ab = await blob.arrayBuffer();
+      audioBuffer = await audioCtx.decodeAudioData(ab);
+      setEstado('Voz creada lista...');
+    } catch(e) {
+      setEstado('Error con la voz: ' + e.message);
+      return;
+    }
+  }
 
   try {
-    // 1. Obtener voz neuronal real
-    const urlVoz = 'https://api.streamelements.com/kappa/v2/speech?voice=Google%20espa%C3%B1ol&text=' + encodeURIComponent(fraseCompleta);
-    const res = await fetch(urlVoz);
-    if (!res.ok) throw new Error('Error voz');
-    const blobVoz = await res.blob();
-    const arrayBuffer = await blobVoz.arrayBuffer();
-    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    await new Promise((res) => {
+      if (santaImg.complete && santaImg.naturalWidth !== 0) res();
+      else { santaImg.onload = res; santaImg.onerror = res; setTimeout(res, 2500); }
+    });
 
-    setEstado('🎤 Voz lista. Creando video con efectos...', 40);
-
-    // 2. Preparar audio con efecto Papá Noel
+    // 3. Preparar audio con efecto Papa Noel YouTube: grave, lento, con eco
     const source = audioCtx.createBufferSource();
     source.buffer = audioBuffer;
-    source.playbackRate.value = velocidad;
+    source.playbackRate.value = 0.85;
 
-    const filtroGrave = audioCtx.createBiquadFilter();
-    filtroGrave.type = 'lowshelf'; filtroGrave.frequency.value = 200; filtroGrave.gain.value = 15;
-    const filtroTono = audioCtx.createBiquadFilter();
-    filtroTono.type = 'lowpass'; filtroTono.frequency.value = 1000 * tono + 500;
+    const grave = audioCtx.createBiquadFilter();
+    grave.type = 'lowshelf'; grave.frequency.value = 180; grave.gain.value = 18;
+
+    const corte = audioCtx.createBiquadFilter();
+    corte.type = 'lowpass'; corte.frequency.value = 1300;
 
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 256;
+
     const audioDest = audioCtx.createMediaStreamDestination();
     const gainMain = audioCtx.createGain(); gainMain.gain.value = 1.6;
 
-    source.connect(filtroGrave);
-    filtroGrave.connect(filtroTono);
-    filtroTono.connect(gainMain);
-    gainMain.connect(analyser);
+    // Eco simple tipo taller / video de YouTube
+    const delay = audioCtx.createDelay();
+    delay.delayTime.value = 0.18;
+    const feedback = audioCtx.createGain();
+    feedback.gain.value = 0.25;
+    const wet = audioCtx.createGain();
+    wet.gain.value = 0.3;
+
+    source.connect(grave);
+    grave.connect(corte);
+    corte.connect(analyser);
+    analyser.connect(gainMain);
     gainMain.connect(audioCtx.destination);
     gainMain.connect(audioDest);
+    // ruta eco
+    gainMain.connect(delay);
+    delay.connect(feedback);
+    feedback.connect(delay);
+    delay.connect(wet);
+    wet.connect(audioDest);
 
-    // 3. Música de fondo si está activada
-    let musicNodes = [];
-    if (conMusica) {
-      const notas = [
-        [329.63,0,0.3],[329.63,0.3,0.3],[329.63,0.6,0.6],
-        [329.63,1.2,0.3],[329.63,1.5,0.3],[329.63,1.8,0.6],
-        [329.63,2.4,0.3],[392,2.7,0.3],[261.63,3.0,0.3],[293.66,3.3,0.6],[329.63,4.2,0.9]
-      ];
-      notas.forEach(([freq, inicio, dur]) => {
-        const osc = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        osc.type = 'triangle'; osc.frequency.value = freq;
-        g.gain.setValueAtTime(0.08, audioCtx.currentTime + inicio);
-        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + inicio + dur);
-        osc.connect(g); g.connect(audioDest); g.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + inicio);
-        osc.stop(audioCtx.currentTime + inicio + dur);
-        musicNodes.push(osc);
-      });
-    }
-
-    // 4. Preparar grabación del canvas
-    await new Promise((resolve) => { if (santaImg.complete) resolve(); else santaImg.onload = resolve; });
-
+    // 4. Grabación
     const canvasStream = canvas.captureStream(30);
-    const combinedStream = new MediaStream([...canvasStream.getVideoTracks(), ...audioDest.stream.getAudioTracks()]);
-    const recorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm', videoBitsPerSecond: 5000000 });
+    const combined = new MediaStream([...canvasStream.getVideoTracks(), ...audioDest.stream.getAudioTracks()]);
+    let mime = 'video/webm';
+    if (!MediaRecorder.isTypeSupported(mime)) mime = 'video/mp4';
+    const recorder = new MediaRecorder(combined, { mimeType: mime, videoBitsPerSecond: 5000000 });
     let chunks = [];
     recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-
-    const tiempoInicio = Date.now();
-    let duracionVideo = 0;
-
     recorder.onstop = () => {
-      videoBlob = new Blob(chunks, { type: 'video/webm' });
+      videoBlob = new Blob(chunks, { type: mime });
       videoUrl = URL.createObjectURL(videoBlob);
-      document.getElementById('videoFinal').src = videoUrl;
-      document.getElementById('resultado').style.display = 'block';
-      duracionVideo = ((Date.now() - tiempoInicio)/1000).toFixed(1);
-      document.getElementById('statDur').innerText = duracionVideo + 's';
-      document.getElementById('statSize').innerText = (videoBlob.size / 1024 / 1024).toFixed(2) + ' MB';
-      setEstado('✅ Video PRO listo. Descargalo y mandalo por WhatsApp.', 100);
-      document.getElementById('resultado').scrollIntoView({ behavior: 'smooth' });
+      const v = document.getElementById('videoFinal');
+      v.src = videoUrl;
+      v.style.display = 'block';
+      document.getElementById('btnDescargar').style.display = 'block';
+      setEstado('Listo. Video como videollamada, con voz real.');
     };
 
-    // 5. Función de dibujo del video PRO
-    let palabras = conSubtitulos ? texto.split(' ') : [];
-    let tiempoVoz = 0;
+    const duracion = (audioBuffer.duration / 0.85) + 1.5;
+    const tiempoInicio = Date.now();
+    let ultimoBlink = 0;
 
-    function dibujarFrame() {
-      if (!source) return;
-      analyser.getByteFrequencyData(new Uint8Array(analyser.frequencyBinCount));
+    function dibujar() {
+      if (Date.now() - tiempoInicio > duracion * 1000 + 500) return;
+
       const dataArray = new Uint8Array(analyser.frequencyBinCount);
       analyser.getByteFrequencyData(dataArray);
       let volumen = dataArray.reduce((a,b)=>a+b,0) / dataArray.length;
-      let escalaBoca = 0.1 + (volumen / 45);
-      if (escalaBoca > 1.4) escalaBoca = 1.4;
+      if (volumen < 2) volumen = 5 + Math.random()*5;
 
-      // Fondo
-      ctx.fillStyle = colorFondo;
+      let escalaBoca = 0.1 + (volumen / 40);
+      if (escalaBoca > 1.5) escalaBoca = 1.5;
+      let estaRiendo = volumen > 55;
+
+      // Fondo simple, tipo llamada
+      ctx.fillStyle = '#1e1e1e';
       ctx.fillRect(0, 0, 1080, 1080);
 
-      // Luces navideñas arriba
-      if (conLuces) {
-        lucesArray.forEach(l => {
-          let brillo = 0.5 + 0.5 * Math.sin(Date.now()/300 + l.fase);
-          ctx.fillStyle = l.color;
-          ctx.globalAlpha = brillo;
-          ctx.beginPath();
-          ctx.arc(l.x, l.y, 12, 0, Math.PI*2);
-          ctx.fill();
-          ctx.globalAlpha = 1;
-        });
-      }
+      // Movimiento de cara sutil como en videollamada
+      let moveX = Math.sin(Date.now() / 400) * 8 * (volumen/30 + 0.3);
+      let moveY = Math.cos(Date.now() / 500) * 5 * (volumen/30 + 0.3);
+      let rot = Math.sin(Date.now() / 600) * 0.02 * (volumen/30 + 0.5);
+      if (estaRiendo) rot += (Math.random() - 0.5) * 0.08;
 
-      // Nieve
-      if (conNieve) {
-        ctx.fillStyle = 'white';
-        nieveParticulas.forEach(p => {
-          p.y += p.velocidad;
-          p.x += Math.sin(p.y/50) * 0.5;
-          if (p.y > 1080) { p.y = -10; p.x = Math.random()*1080; }
-          ctx.globalAlpha = p.opacidad;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fill();
-        });
-        ctx.globalAlpha = 1;
-      }
-
-      // Marco dorado
-      ctx.strokeStyle = 'gold';
-      ctx.lineWidth = 8;
-      ctx.strokeRect(10, 10, 1060, 1060);
-
-      // Santa con movimiento
-      let escala = 1 + (volumen / 500);
-      let cw = 800 * escala;
-      let ch = 800 * escala;
-      let cx = (1080 - cw)/2;
-      let cy = (1080 - ch)/2 + 40;
+      let escala = 1 + (volumen / 600);
+      let cw = 780 * escala;
+      let ch = 780 * escala;
 
       ctx.save();
-      ctx.translate(540, 540);
-      ctx.rotate(Math.sin(Date.now()/500) * 0.02 * (volumen/30 + 1));
-      ctx.drawImage(santaImg, -cw/2, -ch/2 + 60, cw, ch);
+      ctx.translate(540 + moveX, 520 + moveY);
+      ctx.rotate(rot);
+      if (santaImg.complete && santaImg.naturalWidth !== 0) {
+        ctx.drawImage(santaImg, -cw/2, -ch/2, cw, ch);
+      } else {
+        ctx.fillStyle = '#d62828';
+        ctx.beginPath(); ctx.arc(0, 0, 300, 0, Math.PI*2); ctx.fill();
+      }
 
-      // Boca animada
+      // Boca que se mueve con la voz
       ctx.fillStyle = '#2d0505';
       ctx.strokeStyle = '#ffcccc';
-      ctx.lineWidth = 6;
-      let bocaW = 140;
-      let bocaH = 25 + (escalaBoca * 60);
+      ctx.lineWidth = 5;
+      let bocaH = estaRiendo ? 70 + escalaBoca * 30 : 20 + escalaBoca * 45;
+      let bocaW = estaRiendo ? 160 : 130;
       ctx.beginPath();
       ctx.ellipse(0, 300, bocaW/2, bocaH/2, 0, 0, Math.PI*2);
       ctx.fill();
       ctx.stroke();
 
-      // Barba que se mueve
-      if (volumen > 40) {
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-        ctx.beginPath();
-        ctx.ellipse(0, 380, 100, 20 + volumen/3, 0, 0, Math.PI*2);
-        ctx.fill();
+      // Risa: ojos cerrados
+      if (estaRiendo) {
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(-140, 120); ctx.lineTo(-80, 120); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(80, 120); ctx.lineTo(140, 120); ctx.stroke();
       }
 
       ctx.restore();
 
-      // Parpadeo simulado
-      if (Math.random() < 0.02) {
-        ctx.fillStyle = 'rgba(0,0,0,0.9)';
-        ctx.fillRect(cx, cy + ch*0.28, cw, 35);
+      // Parpadeo normal
+      if (Date.now() - ultimoBlink > 3200 && !estaRiendo) {
+        ctx.fillStyle = 'rgba(0,0,0,0.85)';
+        ctx.fillRect(400, 380, 280, 25);
+        ultimoBlink = Date.now();
       }
 
-      // Subtítulos estilo karaoke
-      if (conSubtitulos) {
-        ctx.fillStyle = 'rgba(0,0,0,0.75)';
-        ctx.fillRect(80, 920, 920, 110);
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 44px Arial';
-        ctx.textAlign = 'center';
-        let textoCorto = palabras.slice(0, 8).join(' ');
-        if (textoCorto.length > 40) textoCorto = textoCorto.substring(0, 40) + '...';
-        ctx.fillText('“' + textoCorto + '”', 540, 985);
-      }
-
-      // Texto intro
-      if (Date.now() - tiempoInicio < introSeg * 1000) {
-        ctx.fillStyle = 'gold';
-        ctx.font = 'bold 60px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('🎅 MENSAJE DE PAPÁ NOEL 🎅', 540, 150);
-      }
-
-      if (volumen > 1 || Date.now() - tiempoInicio < (introSeg*1000 + audioBuffer.duration*1000/velocidad + 1000)) {
-        requestAnimationFrame(dibujarFrame);
-      }
+      requestAnimationFrame(dibujar);
     }
 
-    setEstado('🎬 Grabando video... Papá Noel está hablando', 60);
+    setEstado('Grabando... Papa Noel hablando como en videollamada');
     recorder.start();
     source.start();
-    tiempoVoz = audioCtx.currentTime;
-    dibujarFrame();
+    dibujar();
+    source.onended = () => setTimeout(() => { try { recorder.stop(); } catch(e){} }, 600);
+    setTimeout(() => { try { if (recorder.state !== 'inactive') recorder.stop(); } catch(e){} }, duracion * 1000 + 2000);
 
-    source.onended = () => {
-      setTimeout(() => {
-        try { recorder.stop(); } catch(e){}
-      }, 800);
-    };
-
-  } catch (error) {
-    console.error(error);
-    setEstado('❌ Error. Revisá tu internet y probá de nuevo.');
+  } catch(e) {
+    setEstado('Error: ' + e.message);
   }
 }
 
-function descargarVideo() {
+function descargar() {
   if (!videoBlob) return;
   const a = document.createElement('a');
   a.href = videoUrl;
-  a.download = 'papa-noel-' + (document.getElementById('nombreInput').value || 'saludo') + '.webm';
-  document.body.appendChild(a);
+  a.download = 'papa-noel-videollamada.webm';
   a.click();
-  a.remove();
-}
-
-function compartirWhatsApp() {
-  if (!videoBlob) return;
-  if (navigator.share && navigator.canShare) {
-    const file = new File([videoBlob], 'papa-noel.webm', { type: 'video/webm' });
-    if (navigator.canShare({ files: [file] })) {
-      navigator.share({ files: [file], title: 'Video de Papá Noel', text: 'Mira lo que te trajo Papá Noel!' }).catch(()=>{});
-      return;
-    }
-  }
-  const nombre = document.getElementById('nombreInput').value || 'amigo';
-  const texto = encodeURIComponent('Hola ' + nombre + '! Te llegó un video de Papá Noel 🎅🎬');
-  window.open('https://wa.me/?text=' + texto, '_blank');
-}
-
-function volverPanel() {
-  document.getElementById('resultado').style.display = 'none';
-  document.getElementById('estado').innerText = '';
-  window.scrollTo(0, 0);
 }
 </script>
-
 </body>
 </html>
