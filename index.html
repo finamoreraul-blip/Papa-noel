@@ -2,121 +2,288 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Papa Noel Real</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papa Noel Videollamada</title>
 <style>
-body{margin:0;background:#111;color:#fff;font-family:Arial;padding:20px;display:flex;justify-content:center}
-.caja{width:100%;max-width:400px}
-input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#222;color:#fff;margin-top:8px;font-size:16px}
-textarea{height:80px}
-button{width:100%;padding:15px;border:none;border-radius:30px;background:#d62828;color:#fff;font-size:18px;font-weight:bold;margin-top:15px}
-#estado{text-align:center;color:#ffcc00;margin-top:10px;min-height:20px;font-size:14px}
-#videoFinal{width:100%;border-radius:15px;margin-top:15px;display:none;background:#000}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#0f0f0f;color:#fff;min-height:100vh;display:flex;justify-content:center;padding:20px}
+  .caja{width:100%;max-width:430px;background:#181818;border-radius:24px;padding:24px;border:1px solid #2a2a2a}
+  h1{text-align:center;font-size:24px}
+  .sub{text-align:center;color:#999;font-size:13px;margin-bottom:18px}
+  label{display:block;font-size:12px;color:#aaa;margin-top:14px;margin-bottom:5px;font-weight:700}
+  input[type="text"],textarea,input[type="file"]{width:100%;padding:13px;border-radius:14px;border:1px solid #333;background:#111;color:#fff;font-size:16px;outline:none}
+  textarea{height:90px;resize:none}
+  input[type="file"]{padding:10px;font-size:13px;border-style:dashed}
+  .btn{width:100%;padding:17px;border:none;border-radius:30px;background:#d62828;color:#fff;font-size:18px;font-weight:800;margin-top:20px;cursor:pointer}
+  .btn:hover{opacity:0.9}
+  .btn-green{background:#25D366;margin-top:10px;display:none}
+  .btn-wa{background:#111;border:1px solid #25D366;color:#25D366;margin-top:10px;display:none}
+  #estado{text-align:center;color:#ffcc00;font-weight:700;margin-top:12px;min-height:20px;font-size:14px}
+  .barra{width:100%;height:8px;background:#222;border-radius:10px;overflow:hidden;margin-top:10px;display:none}
+  .barra>div{height:100%;width:0%;background:#d62828}
+  #videoFinal{width:100%;border-radius:18px;margin-top:15px;display:none;background:#000;border:2px solid #333}
+  .info{margin-top:10px;background:#111;padding:10px;border-radius:12px;font-size:12px;color:#aaa;display:none;text-align:center}
 </style>
 </head>
 <body>
 <div class="caja">
-<h1 style="text-align:center">🎅 Papa Noel</h1>
-<input id="nombre" placeholder="Nombre">
-<textarea id="mensaje" placeholder="Mensaje"></textarea>
-<button onclick="generar()">GENERAR VIDEO</button>
-<div id="estado"></div>
-<video id="videoFinal" controls playsinline></video>
+  <h1>🎅 Papa Noel</h1>
+  <p class="sub">Videollamada. Voz tipo YouTube. Simple.</p>
+
+  <label>Nombre</label>
+  <input type="text" id="nombre" placeholder="Ej: Santiago">
+
+  <label>Mensaje</label>
+  <textarea id="mensaje" placeholder="Escribi lo que dice Papa Noel"></textarea>
+
+  <label>Foto de Papa Noel (opcional)</label>
+  <input type="file" id="fotoSanta" accept="image/*">
+
+  <label>Tu voz de YouTube (opcional, mp3)</label>
+  <input type="file" id="audioYoutube" accept="audio/*">
+
+  <button class="btn" onclick="generar()">GENERAR VIDEO</button>
+  <div id="estado"></div>
+  <div class="barra" id="barra"><div id="barraFill"></div></div>
+  <video id="videoFinal" controls playsinline></video>
+  <div class="info" id="info"></div>
+  <button class="btn btn-green" id="btnDescargar" onclick="descargar()">DESCARGAR VIDEO</button>
+  <button class="btn btn-wa" id="btnWhats" onclick="compartir()">COMPARTIR POR WHATSAPP</button>
 </div>
-<canvas id="canvas" width="720" height="720" style="display:none"></canvas>
+
+<canvas id="canvas" width="1080" height="1080" style="display:none"></canvas>
+
 <script>
 const canvas=document.getElementById('canvas');
 const ctx=canvas.getContext('2d');
-let audioCtx, videoUrl;
-function setE(t){document.getElementById('estado').innerText=t}
+let santaImg=new Image();
+santaImg.src='santa.png';
+let fotoPersonalizada=null;
+let audioCtx=null;
+let videoBlob=null;
+let videoUrl=null;
 
-function dibujarSanta(tiempo, vol, riendo){
-  ctx.fillStyle='#1a1a1a';
-  ctx.fillRect(0,0,720,720);
-  ctx.save();
-  ctx.translate(360+Math.sin(tiempo/400)*6, 360);
-  // gorro
-  ctx.fillStyle='#d62828';
-  ctx.beginPath(); ctx.ellipse(0,-140,150,120,0,0,Math.PI*2); ctx.fill();
-  ctx.fillStyle='#fff';
-  ctx.beginPath(); ctx.ellipse(0,-230,155,40,0,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(120,-220,35,0,Math.PI*2); ctx.fill();
-  // cara
-  ctx.fillStyle='#ffcc99';
-  ctx.beginPath(); ctx.arc(0,-40,150,0,Math.PI*2); ctx.fill();
-  // barba
-  ctx.fillStyle='#f5f5f5';
-  ctx.beginPath(); ctx.ellipse(0,90,140,110,0,0,Math.PI*2); ctx.fill();
-  // ojos
-  ctx.fillStyle='#000';
-  ctx.beginPath(); ctx.arc(-55,-70,14,0,Math.PI*2); ctx.fill();
-  ctx.beginPath(); ctx.arc(55,-70,14,0,Math.PI*2); ctx.fill();
-  // boca que se mueve
-  ctx.fillStyle='#300505';
-  let bh = riendo ? 50 : 10 + vol*0.8;
-  ctx.beginPath(); ctx.ellipse(0,60,45,bh/2,0,0,Math.PI*2); ctx.fill();
-  ctx.restore();
+function setEstado(t){document.getElementById('estado').innerText=t}
+function setBarra(p){
+  document.getElementById('barra').style.display='block';
+  document.getElementById('barraFill').style.width=p+'%';
+}
+
+document.getElementById('fotoSanta').addEventListener('change',function(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    fotoPersonalizada=new Image();
+    fotoPersonalizada.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+async function conseguirAudio(texto){
+  const file=document.getElementById('audioYoutube').files[0];
+  if(file){
+    const url=URL.createObjectURL(file);
+    const a=new Audio(url);
+    await new Promise((res,rej)=>{
+      a.addEventListener('loadedmetadata',res);
+      a.addEventListener('error',()=>rej(new Error('Tu audio no se pudo leer')));
+    });
+    return a;
+  }
+
+  const frase='Ho ho! '+texto+' Ho ho! Feliz Navidad!';
+  const urls=[
+    'https://api.streamelements.com/kappa/v2/speech?voice=Google%20espa%C3%B1ol&text='+encodeURIComponent(frase),
+    'https://api.streamelements.com/kappa/v2/speech?voice=Microsoft%20Pablo%20-%20Spanish%20(Spain)&text='+encodeURIComponent(frase),
+    'https://translate.google.com/translate_tts?ie=UTF-8&tl=es&client=tw-ob&q='+encodeURIComponent(frase)
+  ];
+
+  for(const u of urls){
+    try{
+      const a=new Audio(u);
+      a.crossOrigin='anonymous';
+      await new Promise((res,rej)=>{
+        const to=setTimeout(()=>res(),4000);
+        a.addEventListener('loadedmetadata',()=>{clearTimeout(to);res()});
+        a.addEventListener('error',()=>{clearTimeout(to);rej()});
+      });
+      if(a.duration>0.5||a.readyState>=1) return a;
+    }catch(e){continue}
+  }
+  throw new Error('No se pudo crear la voz. Revisa internet.');
 }
 
 async function generar(){
   let nombre=document.getElementById('nombre').value.trim();
   let texto=document.getElementById('mensaje').value.trim();
   if(!texto){alert('Escribi un mensaje');return}
-  if(nombre) texto='Hola '+nombre+', che. '+texto;
-  setE('Buscando voz...');
+  if(nombre) texto='Hola '+nombre+'. '+texto;
+
+  setEstado('Preparando...');
+  setBarra(5);
   document.getElementById('videoFinal').style.display='none';
+  document.getElementById('btnDescargar').style.display='none';
+  document.getElementById('btnWhats').style.display='none';
+  document.getElementById('info').style.display='none';
+
   if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==='suspended') await audioCtx.resume();
+
   try{
-    let frase='Ho ho! '+texto+' Ho ho! Feliz Navidad!';
-    let url='https://api.streamelements.com/kappa/v2/speech?voice=Google%20espa%C3%B1ol&text='+encodeURIComponent(frase);
-    let res=await fetch(url);
-    if(!res.ok) throw new Error('La API de voz no responde, codigo '+res.status);
-    let blob=await res.blob();
-    if(blob.size<1000) throw new Error('La voz vino vacia');
-    let objUrl=URL.createObjectURL(blob);
-    let audio=new Audio(objUrl);
-    await new Promise((ok,no)=>{
-      audio.addEventListener('loadedmetadata',ok);
-      audio.addEventListener('error',()=>no(new Error('No se pudo cargar el audio')));
-      setTimeout(()=>ok(),4000);
+    await new Promise(res=>{
+      const img=fotoPersonalizada||santaImg;
+      if(img.complete&&img.naturalWidth!==0) res();
+      else{img.onload=res;img.onerror=res;setTimeout(res,2500)}
     });
-    setE('Voz lista. Grabando...');
-    let src=audioCtx.createMediaElementSource(audio);
-    let analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
-    let dest=audioCtx.createMediaStreamDestination();
-    let gain=audioCtx.createGain(); gain.gain.value=1.5;
-    src.connect(analyser); analyser.connect(gain); gain.connect(audioCtx.destination); gain.connect(dest);
-    let stream=canvas.captureStream(30);
-    let combined=new MediaStream([...stream.getVideoTracks(),...dest.stream.getAudioTracks()]);
-    let rec=new MediaRecorder(combined,{mimeType:'video/webm'});
+    setBarra(20);
+
+    setEstado('Creando voz tipo YouTube...');
+    const audioEl=await conseguirAudio(texto);
+    setBarra(40);
+    setEstado('Conectando voz con la cara...');
+
+    const src=audioCtx.createMediaElementSource(audioEl);
+    const grave=audioCtx.createBiquadFilter();
+    grave.type='lowshelf'; grave.frequency.value=180; grave.gain.value=18;
+    const corte=audioCtx.createBiquadFilter();
+    corte.type='lowpass'; corte.frequency.value=1400;
+    const analyser=audioCtx.createAnalyser();
+    analyser.fftSize=256;
+    const audioDest=audioCtx.createMediaStreamDestination();
+    const gain=audioCtx.createGain(); gain.gain.value=1.7;
+    src.connect(grave); grave.connect(corte); corte.connect(analyser);
+    analyser.connect(gain); gain.connect(audioCtx.destination); gain.connect(audioDest);
+
+    const delay=audioCtx.createDelay(); delay.delayTime.value=0.18;
+    const fb=audioCtx.createGain(); fb.gain.value=0.25;
+    const wet=audioCtx.createGain(); wet.gain.value=0.3;
+    gain.connect(delay); delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(audioDest);
+
+    const cStream=canvas.captureStream(30);
+    const combined=new MediaStream([...cStream.getVideoTracks(),...audioDest.stream.getAudioTracks()]);
+
+    let mime='video/webm;codecs=vp9,opus';
+    if(!MediaRecorder.isTypeSupported(mime)) mime='video/webm';
+    if(!MediaRecorder.isTypeSupported(mime)) mime='video/mp4';
+    const rec=new MediaRecorder(combined,{mimeType:mime,videoBitsPerSecond:6000000,audioBitsPerSecond:192000});
+
     let chunks=[];
     rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
     rec.onstop=()=>{
-      let b=new Blob(chunks,{type:'video/webm'});
-      videoUrl=URL.createObjectURL(b);
-      let v=document.getElementById('videoFinal');
+      videoBlob=new Blob(chunks,{type:mime});
+      videoUrl=URL.createObjectURL(videoBlob);
+      const v=document.getElementById('videoFinal');
       v.src=videoUrl; v.style.display='block';
-      setE('Listo! Apreta play. Dura '+audio.duration.toFixed(1)+'s');
+      document.getElementById('btnDescargar').style.display='block';
+      document.getElementById('btnWhats').style.display='block';
+      document.getElementById('info').style.display='block';
+      document.getElementById('info').innerText='Duracion: '+(audioEl.duration||0).toFixed(1)+'s | '+(videoBlob.size/1024/1024).toFixed(2)+' MB';
+      setEstado('Listo. Video real generado.');
+      setBarra(100);
     };
-    let dur=audio.duration||10;
-    let inicio=Date.now();
-    function loop(){
-      if(Date.now()-inicio>(dur*1000+800))return;
-      let data=new Uint8Array(analyser.frequencyBinCount);
+
+    let dur=audioEl.duration;
+    if(!dur||isNaN(dur)||dur<2) dur=10;
+    if(dur>60) dur=60;
+
+    const inicio=Date.now();
+    const img=fotoPersonalizada||santaImg;
+    const palabras=texto.split(' ');
+
+    function dibujar(){
+      const t=(Date.now()-inicio)/1000;
+      if(t>dur+0.8) return;
+      setBarra(Math.min(95,40+(t/dur)*55));
+
+      const data=new Uint8Array(analyser.frequencyBinCount);
       analyser.getByteFrequencyData(data);
-      let vol=data.reduce((a,b)=>a+b,0)/data.length;
-      if(vol<2) vol=8;
-      dibujarSanta(Date.now(), vol, vol>55);
-      requestAnimationFrame(loop);
+      let vol=0; for(let i=0;i<data.length;i++) vol+=data[i];
+      vol=vol/data.length;
+      if(vol<3) vol=6+Math.random()*4;
+
+      const escBoca=Math.min(1.6,0.15+vol/38);
+      const riendo=vol>55;
+
+      const moveX=Math.sin(Date.now()/400)*10*(vol/30+0.3);
+      const moveY=Math.cos(Date.now()/550)*6*(vol/30+0.3);
+      const rot=Math.sin(Date.now()/700)*0.025*(vol/30+0.5)+(riendo?(Math.random()-0.5)*0.1:0);
+
+      ctx.fillStyle='#141414';
+      ctx.fillRect(0,0,1080,1080);
+      ctx.fillStyle='rgba(255,255,255,0.04)';
+      ctx.beginPath(); ctx.arc(540,520,420,0,Math.PI*2); ctx.fill();
+
+      const esc=1+(vol/650);
+      const cw=800*esc, ch=800*esc;
+
+      ctx.save();
+      ctx.translate(540+moveX,520+moveY);
+      ctx.rotate(rot);
+      ctx.shadowColor='rgba(0,0,0,0.6)'; ctx.shadowBlur=40;
+      if(img.complete&&img.naturalWidth!==0) ctx.drawImage(img,-cw/2,-ch/2,cw,ch);
+      else{ctx.fillStyle='#d62828';ctx.beginPath();ctx.arc(0,0,320,0,Math.PI*2);ctx.fill()}
+      ctx.shadowBlur=0;
+
+      const bocaH=riendo?75+escBoca*35:22+escBoca*50;
+      const bocaW=riendo?170:135;
+      ctx.fillStyle='#300505';
+      ctx.strokeStyle='rgba(255,200,200,0.9)'; ctx.lineWidth=5;
+      ctx.beginPath(); ctx.ellipse(0,305,bocaW/2,bocaH/2,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+
+      if(riendo){
+        ctx.strokeStyle='#fff'; ctx.lineWidth=9;
+        ctx.beginPath(); ctx.moveTo(-150,120); ctx.quadraticCurveTo(-115,95,-80,120); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(80,120); ctx.quadraticCurveTo(115,95,150,120); ctx.stroke();
+        ctx.fillStyle='#ffcc00'; ctx.font='bold 60px Arial'; ctx.textAlign='center';
+        ctx.fillText('HO HO!',540,150);
+      }
+
+      const progreso=t/dur;
+      const idx=Math.floor(progreso*palabras.length);
+      const txt=palabras.slice(Math.max(0,idx-3),idx+2).join(' ');
+      if(txt){
+        ctx.fillStyle='rgba(0,0,0,0.65)';
+        const anc=Math.min(950,txt.length*16+40);
+        ctx.fillRect(540-anc/2,980,anc,60);
+        ctx.fillStyle='#fff'; ctx.font='bold 28px Arial'; ctx.textAlign='center';
+        ctx.fillText(txt,540,1020);
+      }
+
+      ctx.restore();
+      requestAnimationFrame(dibujar);
     }
+
+    setEstado('Grabando video...');
     rec.start();
-    loop();
-    audio.play();
-    audio.onended=()=>setTimeout(()=>{try{rec.stop()}catch(e){}},600);
+    dibujar();
+    audioEl.play().catch(e=>{setEstado('Error al reproducir voz: '+e.message);try{rec.stop()}catch(err){}});
+    audioEl.onended=()=>setTimeout(()=>{try{rec.stop()}catch(e){}},700);
     setTimeout(()=>{try{if(rec.state!=='inactive')rec.stop()}catch(e){}},(dur*1000)+2500);
+
   }catch(e){
-    setE('ERROR REAL: '+e.message);
+    console.error(e);
+    setEstado('Error: '+e.message);
+    setBarra(0);
+  }
+}
+
+function descargar(){
+  if(!videoBlob) return;
+  const a=document.createElement('a');
+  a.href=videoUrl;
+  a.download='papa-noel-videollamada.webm';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+async function compartir(){
+  if(!videoBlob) return;
+  const file=new File([videoBlob],'papa-noel.webm',{type:videoBlob.type});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:'Video de Papa Noel',text:'Mira lo que me mando Papa Noel'})}catch(e){}
+  }else{
+    descargar();
+    alert('Tu celular no permite compartir directo, se descargo el video.');
   }
 }
 </script>
