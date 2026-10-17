@@ -3,117 +3,121 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Papa Noel Argentino</title>
+<title>Papa Noel Real</title>
 <style>
 body{margin:0;background:#111;color:#fff;font-family:Arial;padding:20px;display:flex;justify-content:center}
-.caja{width:100%;max-width:420px}
-h1{text-align:center;font-size:22px}
-input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#222;color:#fff;margin-top:6px;font-size:16px}
+.caja{width:100%;max-width:400px}
+input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#222;color:#fff;margin-top:8px;font-size:16px}
 textarea{height:80px}
-button{width:100%;padding:15px;border:none;border-radius:30px;background:#d62828;color:#fff;font-size:18px;font-weight:bold;margin-top:15px;cursor:pointer}
-#estado{text-align:center;color:#ffcc00;margin-top:10px;min-height:20px}
+button{width:100%;padding:15px;border:none;border-radius:30px;background:#d62828;color:#fff;font-size:18px;font-weight:bold;margin-top:15px}
+#estado{text-align:center;color:#ffcc00;margin-top:10px;min-height:20px;font-size:14px}
 #videoFinal{width:100%;border-radius:15px;margin-top:15px;display:none;background:#000}
 </style>
 </head>
 <body>
 <div class="caja">
-<h1>🎅 Papa Noel Argentino</h1>
-<input id="nombre" placeholder="Nombre del nene">
-<textarea id="mensaje" placeholder="Mensaje, ej: Portate bien este año..."></textarea>
+<h1 style="text-align:center">🎅 Papa Noel</h1>
+<input id="nombre" placeholder="Nombre">
+<textarea id="mensaje" placeholder="Mensaje"></textarea>
 <button onclick="generar()">GENERAR VIDEO</button>
 <div id="estado"></div>
 <video id="videoFinal" controls playsinline></video>
-<button id="btnDescargar" style="display:none;background:#25D366" onclick="descargar()">DESCARGAR</button>
 </div>
-<canvas id="canvas" width="1080" height="1080" style="display:none"></canvas>
+<canvas id="canvas" width="720" height="720" style="display:none"></canvas>
 <script>
 const canvas=document.getElementById('canvas');
 const ctx=canvas.getContext('2d');
-let santa=new Image();
-santa.src='santa.png';
-let audioCtx, videoBlob, videoUrl;
+let audioCtx, videoUrl;
 function setE(t){document.getElementById('estado').innerText=t}
 
-async function generar(){
-let nombre=document.getElementById('nombre').value.trim();
-let texto=document.getElementById('mensaje').value.trim();
-if(!texto){alert('Escribi un mensaje');return}
-if(nombre) texto='Hola '+nombre+', che. '+texto;
-setE('Creando voz argentina...');
-document.getElementById('videoFinal').style.display='none';
-document.getElementById('btnDescargar').style.display='none';
-if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-if(audioCtx.state==='suspended') await audioCtx.resume();
-try{
-  await new Promise(r=>{ if(santa.complete) r(); else {santa.onload=r; santa.onerror=r; setTimeout(r,2000);} });
-  // Voz argentina, simple y que no falla
-  let frase='Ho ho! '+texto+' Ho ho! Feliz Navidad, che!';
-  let url='https://api.streamelements.com/kappa/v2/speech?voice=Google%20espa%C3%B1ol&text='+encodeURIComponent(frase);
-  let res=await fetch(url);
-  if(!res.ok) throw new Error('fallo la voz, proba de nuevo');
-  let blob=await res.blob();
-  let urlObj=URL.createObjectURL(blob);
-  let audioEl=new Audio(urlObj);
-  await new Promise((res,rej)=>{
-    audioEl.addEventListener('loadedmetadata',res);
-    audioEl.addEventListener('error',()=>rej(new Error('no cargo el audio')));
-  });
-  let src=audioCtx.createMediaElementSource(audioEl);
-  let grave=audioCtx.createBiquadFilter();
-  grave.type='lowshelf'; grave.frequency.value=200; grave.gain.value=15;
-  let analyser=audioCtx.createAnalyser();
-  analyser.fftSize=256;
-  let dest=audioCtx.createMediaStreamDestination();
-  let gain=audioCtx.createGain(); gain.gain.value=1.5;
-  src.connect(grave); grave.connect(analyser); analyser.connect(gain); gain.connect(audioCtx.destination); gain.connect(dest);
-  let stream=canvas.captureStream(30);
-  let combined=new MediaStream([...stream.getVideoTracks(),...dest.stream.getAudioTracks()]);
-  let rec=new MediaRecorder(combined,{mimeType:'video/webm'});
-  let chunks=[];
-  rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
-  rec.onstop=()=>{
-    videoBlob=new Blob(chunks,{type:'video/webm'});
-    videoUrl=URL.createObjectURL(videoBlob);
-    let v=document.getElementById('videoFinal');
-    v.src=videoUrl; v.style.display='block';
-    document.getElementById('btnDescargar').style.display='block';
-    setE('Listo!');
-  };
-  let dur=audioEl.duration||8;
-  let inicio=Date.now();
-  function dibujar(){
-    if(Date.now()-inicio>(dur*1000+800))return;
-    let data=new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteFrequencyData(data);
-    let vol=data.reduce((a,b)=>a+b,0)/data.length;
-    if(vol<2) vol=5+Math.random()*4;
-    let escala=0.1+vol/40;
-    let riendo=vol>55;
-    ctx.fillStyle='#1e1e1e'; ctx.fillRect(0,0,1080,1080);
-    let movX=Math.sin(Date.now()/400)*8;
-    ctx.save();
-    ctx.translate(540+movX,520);
-    if(santa.complete&&santa.naturalWidth!==0){
-      let w=800*(1+vol/600); ctx.drawImage(santa,-w/2,-w/2,w);
-    }
-    ctx.fillStyle='#2d0505';
-    let bh=riendo?70+escala*30:20+escala*45;
-    ctx.beginPath(); ctx.ellipse(0,300,70,bh/2,0,0,Math.PI*2); ctx.fill();
-    ctx.restore();
-    requestAnimationFrame(dibujar);
-  }
-  setE('Grabando...');
-  rec.start();
-  dibujar();
-  audioEl.play();
-  audioEl.onended=()=>setTimeout(()=>{try{rec.stop()}catch(e){}},600);
-  setTimeout(()=>{try{if(rec.state!=='inactive')rec.stop()}catch(e){}},(dur*1000)+2000);
-}catch(e){
-  setE('Error: '+e.message);
+function dibujarSanta(tiempo, vol, riendo){
+  ctx.fillStyle='#1a1a1a';
+  ctx.fillRect(0,0,720,720);
+  ctx.save();
+  ctx.translate(360+Math.sin(tiempo/400)*6, 360);
+  // gorro
+  ctx.fillStyle='#d62828';
+  ctx.beginPath(); ctx.ellipse(0,-140,150,120,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#fff';
+  ctx.beginPath(); ctx.ellipse(0,-230,155,40,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(120,-220,35,0,Math.PI*2); ctx.fill();
+  // cara
+  ctx.fillStyle='#ffcc99';
+  ctx.beginPath(); ctx.arc(0,-40,150,0,Math.PI*2); ctx.fill();
+  // barba
+  ctx.fillStyle='#f5f5f5';
+  ctx.beginPath(); ctx.ellipse(0,90,140,110,0,0,Math.PI*2); ctx.fill();
+  // ojos
+  ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.arc(-55,-70,14,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(55,-70,14,0,Math.PI*2); ctx.fill();
+  // boca que se mueve
+  ctx.fillStyle='#300505';
+  let bh = riendo ? 50 : 10 + vol*0.8;
+  ctx.beginPath(); ctx.ellipse(0,60,45,bh/2,0,0,Math.PI*2); ctx.fill();
+  ctx.restore();
 }
-function descargar(){
-  let a=document.createElement('a');
-  a.href=videoUrl; a.download='papa-noel.webm'; a.click();
+
+async function generar(){
+  let nombre=document.getElementById('nombre').value.trim();
+  let texto=document.getElementById('mensaje').value.trim();
+  if(!texto){alert('Escribi un mensaje');return}
+  if(nombre) texto='Hola '+nombre+', che. '+texto;
+  setE('Buscando voz...');
+  document.getElementById('videoFinal').style.display='none';
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') await audioCtx.resume();
+  try{
+    let frase='Ho ho! '+texto+' Ho ho! Feliz Navidad!';
+    let url='https://api.streamelements.com/kappa/v2/speech?voice=Google%20espa%C3%B1ol&text='+encodeURIComponent(frase);
+    let res=await fetch(url);
+    if(!res.ok) throw new Error('La API de voz no responde, codigo '+res.status);
+    let blob=await res.blob();
+    if(blob.size<1000) throw new Error('La voz vino vacia');
+    let objUrl=URL.createObjectURL(blob);
+    let audio=new Audio(objUrl);
+    await new Promise((ok,no)=>{
+      audio.addEventListener('loadedmetadata',ok);
+      audio.addEventListener('error',()=>no(new Error('No se pudo cargar el audio')));
+      setTimeout(()=>ok(),4000);
+    });
+    setE('Voz lista. Grabando...');
+    let src=audioCtx.createMediaElementSource(audio);
+    let analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
+    let dest=audioCtx.createMediaStreamDestination();
+    let gain=audioCtx.createGain(); gain.gain.value=1.5;
+    src.connect(analyser); analyser.connect(gain); gain.connect(audioCtx.destination); gain.connect(dest);
+    let stream=canvas.captureStream(30);
+    let combined=new MediaStream([...stream.getVideoTracks(),...dest.stream.getAudioTracks()]);
+    let rec=new MediaRecorder(combined,{mimeType:'video/webm'});
+    let chunks=[];
+    rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
+    rec.onstop=()=>{
+      let b=new Blob(chunks,{type:'video/webm'});
+      videoUrl=URL.createObjectURL(b);
+      let v=document.getElementById('videoFinal');
+      v.src=videoUrl; v.style.display='block';
+      setE('Listo! Apreta play. Dura '+audio.duration.toFixed(1)+'s');
+    };
+    let dur=audio.duration||10;
+    let inicio=Date.now();
+    function loop(){
+      if(Date.now()-inicio>(dur*1000+800))return;
+      let data=new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteFrequencyData(data);
+      let vol=data.reduce((a,b)=>a+b,0)/data.length;
+      if(vol<2) vol=8;
+      dibujarSanta(Date.now(), vol, vol>55);
+      requestAnimationFrame(loop);
+    }
+    rec.start();
+    loop();
+    audio.play();
+    audio.onended=()=>setTimeout(()=>{try{rec.stop()}catch(e){}},600);
+    setTimeout(()=>{try{if(rec.state!=='inactive')rec.stop()}catch(e){}},(dur*1000)+2500);
+  }catch(e){
+    setE('ERROR REAL: '+e.message);
+  }
 }
 </script>
 </body>
