@@ -3,33 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Papá Noel Pro</title>
+<title>Papá Noel Video</title>
 <style>
     * { box-sizing: border-box; }
   body {
-    margin: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0; font-family: 'Segoe UI', Arial, sans-serif;
     background: radial-gradient(circle at top, #145a40, #0b3d2e 70%);
-    color: white;
-    min-height: 100vh;
-    text-align: center;
+    color: white; min-height: 100vh; text-align: center;
   }
   #panel { padding: 20px; max-width: 600px; margin: 0 auto; }
-  #panel h1 { color: gold; font-size: 36px; margin-bottom: 5px; }
-  .preview-img {
-    width: 200px; height: 200px; object-fit: cover;
-    border-radius: 50%; border: 4px solid gold; margin: 15px 0;
-  }
-  textarea, input[type="text"] {
-    width: 100%; border-radius: 12px; border: none;
-    padding: 12px; font-size: 16px; margin-top: 10px;
-  }
-  textarea { height: 110px; }
-  button {
-    margin: 10px 5px 0 5px; background: #d62828; color: white;
-    border: none; padding: 14px 28px; font-size: 18px;
-    border-radius: 30px; cursor: pointer; font-weight: bold;
-  }
+  #panel h1 { color: gold; font-size: 34px; }
+  .preview-img { width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 4px solid gold; margin: 15px 0; }
+  textarea, input[type="text"] { width: 100%; border-radius: 12px; border: none; padding: 12px; font-size: 16px; margin-top: 10px; }
+  textarea { height: 90px; }
+  button { margin: 10px 5px 0 5px; background: #d62828; color: white; border: none; padding: 14px 24px; font-size: 17px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+  button.grabar { background: #e63946; }
+  button.grabando { background: #ff0000; animation: blinkBtn 1s infinite; }
+  @keyframes blinkBtn { 50% { opacity: 0.6; } }
   button.music-btn { background: #1d6fa5; }
 
   #escena {
@@ -42,145 +32,208 @@
     width: min(80vw, 500px); height: min(80vw, 500px);
     object-fit: cover; border-radius: 50%;
     border: 8px solid gold; box-shadow: 0 0 60px rgba(255,215,0,0.7);
-    transition: transform 0.15s;
   }
-  /* Cara moviéndose */
-  #santaGrande.hablando {
-    animation: caraHabla 0.5s infinite;
+  /* MODO VIDEO - cuando habla */
+  #santaGrande.en-video {
+    animation: respiracion 2.5s ease-in-out infinite;
   }
-  @keyframes caraHabla {
-    0% { transform: scale(1) rotate(-1deg); }
-    50% { transform: scale(1.04) rotate(1deg); }
-    100% { transform: scale(1) rotate(-1deg); }
+  @keyframes respiracion {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
   }
-  #santaGrande.riendo {
-    animation: caraRisa 0.4s infinite;
-  }
-  @keyframes caraRisa {
-    0% { transform: scale(1.02) rotate(-2deg); }
-    50% { transform: scale(1.08) rotate(2deg); }
-    100% { transform: scale(1.02) rotate(-2deg); }
-  }
-  /* Boca */
   #boca {
     position: absolute; left: 50%; top: 56%;
-    width: 90px; height: 40px;
-    background: #3d0a0a; border-radius: 50%;
-    transform: translateX(-50%) scaleY(0.15);
+    width: 100px; height: 45px;
+    background: #2d0505; border-radius: 50%;
+    transform: translateX(-50%) scaleY(0.1);
     border: 3px solid #ffcccc;
-    transition: transform 0.08s;
   }
-  #boca.abierto {
-    transform: translateX(-50%) scaleY(1.2) scaleX(1.1);
-    background: #5a1010;
+  /* Parpadeo */
+  #parpadeo {
+    position: absolute; left: 50%; top: 40%;
+    width: 220px; height: 60px;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0);
+    pointer-events: none;
+  }
+  #parpadeo.parpadeando {
+    animation: ojoBlink 0.2s;
+  }
+  @keyframes ojoBlink {
+    0% { background: rgba(0,0,0,0); }
+    50% { background: rgba(20,10,10,0.9); border-radius: 50%; }
+    100% { background: rgba(0,0,0,0); }
   }
   #subtitulo {
     margin-top: 25px; background: rgba(0,0,0,0.7); padding: 15px 20px;
-    border-radius: 15px; font-size: 22px; line-height: 1.4;
-    max-width: 90vw; border-left: 5px solid gold;
+    border-radius: 15px; font-size: 22px; max-width: 90vw; border-left: 5px solid gold;
   }
   #btnVolver { margin-top: 20px; background: white; color: #0b3d2e; }
+  .tip { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; margin-top: 15px; font-size: 15px; }
 </style>
 </head>
 <body>
 
 <div id="panel">
-  <h1>🎅 Papá Noel Pro</h1>
+  <h1>🎅 Papá Noel VIDEO</h1>
   <img src="santa.png" class="preview-img" id="preview">
   <input type="text" id="nombreInput" placeholder="Nombre del niño/a: Santiago">
-  <textarea id="texto" placeholder="Escribí el mensaje. Usá [nombre] para el nombre."></textarea>
+  <textarea id="textoGuion" placeholder="Guión de lo que vas a decir grabando. Ejemplo: Hola [nombre], soy Papá Noel..."></textarea>
+  
+  <div class="tip">🎤 Apretá GRABAR, hablá como Papá Noel, lento y grave. Después ESCUCHAR y la foto se convierte en video.</div>
+  
   <br>
-  <button onclick="hablar()">🔊 HABLAR A PANTALLA COMPLETA</button>
+  <button class="grabar" id="btnGrabar" onclick="toggleGrabar()">🎤 GRABAR MI VOZ</button>
+  <button onclick="reproducirComoPapaNoel()" id="btnEscuchar" disabled>▶ CONVERTIR FOTO EN VIDEO</button>
   <button class="music-btn" onclick="toggleMusica()" id="btnMusica">🎵 Música: OFF</button>
 </div>
 
 <div id="escena">
   <div class="foto-wrap">
     <img src="santa.png" id="santaGrande">
+    <div id="parpadeo"></div>
     <div id="boca"></div>
   </div>
   <div id="subtitulo"></div>
   <button id="btnVolver" onclick="volver()">✖ Terminar</button>
 </div>
 
+<audio id="audioGrabado" style="display:none"></audio>
+
 <script>
-  const synth = window.speechSynthesis;
-  const santaGrande = document.getElementById('santaGrande');
-  const preview = document.getElementById('preview');
-  const boca = document.getElementById('boca');
-  let musicaOn = false;
+  let mediaRecorder;
+  let audioChunks = [];
+  let audioBlob;
   let audioCtx;
+  let analyser;
+  let isGrabando = false;
+  let musicaOn = false;
   let musicTimer;
 
-  function hablar() {
-    let texto = document.getElementById('texto').value;
-    const nombre = document.getElementById('nombreInput').value.trim();
-    if (nombre) texto = texto.split('[nombre]').join(nombre);
-    if (!texto.trim()) { alert('Escribí un mensaje primero'); return; }
+  async function toggleGrabar() {
+    const btn = document.getElementById('btnGrabar');
+    if (!isGrabando) {
+      audioChunks = [];
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        document.getElementById('audioGrabado').src = URL.createObjectURL(audioBlob);
+        document.getElementById('btnEscuchar').disabled = false;
+        stream.getTracks().forEach(t => t.stop());
+      };
+      mediaRecorder.start();
+      isGrabando = true;
+      btn.textContent = '⏹ DETENER GRABACIÓN';
+      btn.classList.add('grabando');
+    } else {
+      mediaRecorder.stop();
+      isGrabando = false;
+      btn.textContent = '🎤 GRABAR MI VOZ';
+      btn.classList.remove('grabando');
+    }
+  }
 
-    synth.cancel();
-    // Voz grave en TODA la frase
-    const fraseCompleta = "Ho ho... " + texto + " ...Ho ho!";
-    const utterance = new SpeechSynthesisUtterance(fraseCompleta);
-    utterance.lang = 'es-AR';
-    utterance.pitch = 0.15; // voz bien grave de Papá Noel
-    utterance.rate = 0.85;
-    utterance.volume = 1;
+  function reproducirComoPapaNoel() {
+    if (!audioBlob) return;
+    const url = URL.createObjectURL(audioBlob);
+    const audioEl = document.getElementById('audioGrabado');
+    audioEl.src = url;
+
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaElementSource(audioEl);
+    
+    const filtroGrave = audioCtx.createBiquadFilter();
+    filtroGrave.type = 'lowshelf'; filtroGrave.frequency.value = 300; filtroGrave.gain.value = 15;
+    const filtro2 = audioCtx.createBiquadFilter();
+    filtro2.type = 'lowpass'; filtro2.frequency.value = 1200;
+
+    const delay = audioCtx.createDelay(); delay.delayTime.value = 0.15;
+    const feedback = audioCtx.createGain(); feedback.gain.value = 0.25;
+    const delayGain = audioCtx.createGain(); delayGain.gain.value = 0.3;
+    source.connect(delay); delay.connect(feedback); feedback.connect(delay); delay.connect(delayGain);
+
+    analyser = audioCtx.createAnalyser(); analyser.fftSize = 256;
+    const gainMain = audioCtx.createGain(); gainMain.gain.value = 1.2;
+    source.connect(filtroGrave); filtroGrave.connect(filtro2); filtro2.connect(gainMain);
+    gainMain.connect(analyser); analyser.connect(audioCtx.destination); delayGain.connect(audioCtx.destination);
 
     document.getElementById('panel').style.display = 'none';
     document.getElementById('escena').style.display = 'flex';
-    document.getElementById('subtitulo').textContent = '“' + texto + '”';
+    let guion = document.getElementById('textoGuion').value;
+    const nombre = document.getElementById('nombreInput').value.trim();
+    if (nombre) guion = guion.split('[nombre]').join(nombre);
+    document.getElementById('subtitulo').textContent = guion || 'Ho ho...';
 
-    let esRisa = false;
+    const santa = document.getElementById('santaGrande');
+    const boca = document.getElementById('boca');
+    const parpadeo = document.getElementById('parpadeo');
+    santa.classList.add('en-video');
 
-    utterance.onboundary = (e) => {
-      // Cada sílaba/palabra mueve boca y cara
-      boca.classList.add('abierto');
-      santaGrande.style.transform = `scale(1.05) rotate(${(Math.random()-0.5)*3}deg)`;
-      if (esRisa) {
+    // Parpadeo cada 2 a 5 segundos como persona real
+    let intervaloParpadeo = setInterval(() => {
+      parpadeo.classList.add('parpadeando');
+      setTimeout(() => parpadeo.classList.remove('parpadeando'), 220);
+    }, 2500 + Math.random()*2500);
+
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    let riendo = false;
+
+    function animarVideo() {
+      if (audioEl.paused) return;
+      analyser.getByteFrequencyData(dataArray);
+      let volumen = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+      // 1. Boca se mueve con tu voz real
+      let escalaBoca = 0.1 + (volumen / 70);
+      if (escalaBoca > 1.4) escalaBoca = 1.4;
+      boca.style.transform = `translateX(-50%) scaleY(${escalaBoca})`;
+
+      // 2. Cara se mueve: cabeza, sonrisa, risa
+      let escalaCara = 1 + (volumen / 400);
+      let rotacion = (Math.random() - 0.5) * (volumen / 40);
+      let inclinacionY = Math.sin(Date.now() / 300) * 0.02 * (volumen/50);
+      santa.style.transform = `scale(${escalaCara}) rotate(${rotacion}deg) skewY(${inclinacionY}deg)`;
+
+      // 3. Si el volumen es alto = se está riendo
+      if (volumen > 70) {
+        boca.style.width = '130px';
         boca.style.height = '60px';
-        santaGrande.classList.add('riendo');
+        santa.style.filter = 'brightness(1.1)';
+      } else {
+        boca.style.width = '100px';
+        boca.style.height = '45px';
+        santa.style.filter = 'brightness(1)';
       }
-      setTimeout(() => {
-        boca.classList.remove('abierto');
-        santaGrande.style.transform = 'scale(1)';
-        boca.style.height = '40px';
-      }, 130);
-    };
 
-    utterance.onstart = () => {
-      santaGrande.classList.add('hablando');
-      // Detecta risa en el texto
-      if (fraseCompleta.toLowerCase().includes('jaja') || fraseCompleta.toLowerCase().includes('ho ho')) {
-        esRisa = true;
-      }
-    };
+      requestAnimationFrame(animarVideo);
+    }
 
-    utterance.onend = () => {
-      santaGrande.classList.remove('hablando');
-      santaGrande.classList.remove('riendo');
-      boca.classList.remove('abierto');
+    audioEl.play();
+    audioEl.playbackRate = 0.88;
+    animarVideo();
+
+    audioEl.onended = () => {
+      clearInterval(intervaloParpadeo);
+      santa.classList.remove('en-video');
+      santa.style.transform = 'scale(1)';
+      santa.style.filter = 'brightness(1)';
+      boca.style.transform = 'translateX(-50%) scaleY(0.1)';
       volver();
     };
-
-    synth.speak(utterance);
   }
 
   function volver() {
-    if (synth.speaking) synth.cancel();
     document.getElementById('escena').style.display = 'none';
     document.getElementById('panel').style.display = 'block';
   }
 
   function toggleMusica() {
     const btn = document.getElementById('btnMusica');
-    if (musicaOn) {
-      musicaOn = false; clearInterval(musicTimer);
-      if (audioCtx) audioCtx.close();
-      btn.textContent = '🎵 Música: OFF'; return;
-    }
+    if (musicaOn) { musicaOn = false; clearInterval(musicTimer); btn.textContent = '🎵 Música: OFF'; return; }
     musicaOn = true; btn.textContent = '🎵 Música: ON';
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const notas = [
       [329.63,0,0.3],[329.63,0.3,0.3],[329.63,0.6,0.6],
       [329.63,1.2,0.3],[329.63,1.5,0.3],[329.63,1.8,0.6],
