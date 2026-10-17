@@ -3,211 +3,204 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Papá Noel Personalizado</title>
+<title>Papá Noel Pro</title>
 <style>
+    * { box-sizing: border-box; }
   body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(#0b3d2e, #145a40);
+    background: radial-gradient(circle at top, #145a40, #0b3d2e 70%);
     color: white;
+    min-height: 100vh;
     text-align: center;
-    padding: 20px;
-    overflow-x: hidden;
   }
-  .foto-contenedor {
-    position: relative;
-    display: inline-block;
-    margin-top: 10px;
+  #panel { padding: 20px; max-width: 600px; margin: 0 auto; }
+  #panel h1 { color: gold; font-size: 36px; margin-bottom: 5px; }
+  .preview-img {
+    width: 200px; height: 200px; object-fit: cover;
+    border-radius: 50%; border: 4px solid gold; margin: 15px 0;
   }
-  .santa-img {
-    width: 250px;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 5px solid gold;
-    box-shadow: 0 0 30px rgba(255,215,0,0.6);
+  textarea, input[type="text"] {
+    width: 100%; border-radius: 12px; border: none;
+    padding: 12px; font-size: 16px; margin-top: 10px;
   }
-  .santa-img.hablando {
-    animation: pulse 0.5s infinite alternate;
-  }
-  @keyframes pulse {
-    from { transform: scale(1); }
-    to { transform: scale(1.04); }
-  }
-  #boca {
-    position: absolute;
-    left: 50%;
-    top: 62%;
-    width: 55px;
-    height: 25px;
-    background: #4a0d0d;
-    border-radius: 50%;
-    transform: translateX(-50%) scaleY(0.2);
-    transition: transform 0.1s;
-    border: 2px solid #ffb3b3;
-  }
-  h1 { color: gold; margin: 15px 0 5px 0; font-size: 32px; }
-  p.sub { margin-top: 0; opacity: 0.9; }
-  textarea {
-    width: 90%;
-    max-width: 500px;
-    height: 120px;
-    border-radius: 12px;
-    border: none;
-    padding: 15px;
-    font-size: 16px;
-    margin-top: 20px;
-  }
+  textarea { height: 110px; }
   button {
-    margin: 10px 5px;
-    background: #d62828;
-    color: white;
-    border: none;
-    padding: 14px 26px;
-    font-size: 17px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: bold;
+    margin: 10px 5px 0 5px; background: #d62828; color: white;
+    border: none; padding: 14px 28px; font-size: 18px;
+    border-radius: 30px; cursor: pointer; font-weight: bold;
   }
   button.music-btn { background: #1d6fa5; }
-  select {
-    margin-top: 10px;
-    padding: 8px;
-    border-radius: 8px;
-    max-width: 90%;
+
+  #escena {
+    display: none; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 100vh; padding: 20px;
+    background: radial-gradient(circle at 50% 30%, #1a6b4a, #06231a 80%);
   }
-  .snow {
-    position: fixed;
-    top: -10px;
-    color: white;
-    font-size: 18px;
-    animation: fall linear infinite;
-    pointer-events: none;
+  .foto-wrap { position: relative; display: inline-block; }
+  #santaGrande {
+    width: min(80vw, 500px); height: min(80vw, 500px);
+    object-fit: cover; border-radius: 50%;
+    border: 8px solid gold; box-shadow: 0 0 60px rgba(255,215,0,0.7);
+    transition: transform 0.15s;
   }
-  @keyframes fall {
-    to { transform: translateY(100vh); }
+  /* Cara moviéndose */
+  #santaGrande.hablando {
+    animation: caraHabla 0.5s infinite;
   }
+  @keyframes caraHabla {
+    0% { transform: scale(1) rotate(-1deg); }
+    50% { transform: scale(1.04) rotate(1deg); }
+    100% { transform: scale(1) rotate(-1deg); }
+  }
+  #santaGrande.riendo {
+    animation: caraRisa 0.4s infinite;
+  }
+  @keyframes caraRisa {
+    0% { transform: scale(1.02) rotate(-2deg); }
+    50% { transform: scale(1.08) rotate(2deg); }
+    100% { transform: scale(1.02) rotate(-2deg); }
+  }
+  /* Boca */
+  #boca {
+    position: absolute; left: 50%; top: 56%;
+    width: 90px; height: 40px;
+    background: #3d0a0a; border-radius: 50%;
+    transform: translateX(-50%) scaleY(0.15);
+    border: 3px solid #ffcccc;
+    transition: transform 0.08s;
+  }
+  #boca.abierto {
+    transform: translateX(-50%) scaleY(1.2) scaleX(1.1);
+    background: #5a1010;
+  }
+  #subtitulo {
+    margin-top: 25px; background: rgba(0,0,0,0.7); padding: 15px 20px;
+    border-radius: 15px; font-size: 22px; line-height: 1.4;
+    max-width: 90vw; border-left: 5px solid gold;
+  }
+  #btnVolver { margin-top: 20px; background: white; color: #0b3d2e; }
 </style>
 </head>
 <body>
 
-<h1>🎅 Papá Noel</h1>
-<p class="sub">Escribí tu mensaje y yo lo digo</p>
-
-<div class="foto-contenedor">
-  <img src="santa.png" alt="Papá Noel" class="santa-img" id="santa">
-  <div id="boca"></div>
+<div id="panel">
+  <h1>🎅 Papá Noel Pro</h1>
+  <img src="santa.png" class="preview-img" id="preview">
+  <input type="text" id="nombreInput" placeholder="Nombre del niño/a: Santiago">
+  <textarea id="texto" placeholder="Escribí el mensaje. Usá [nombre] para el nombre."></textarea>
+  <br>
+  <button onclick="hablar()">🔊 HABLAR A PANTALLA COMPLETA</button>
+  <button class="music-btn" onclick="toggleMusica()" id="btnMusica">🎵 Música: OFF</button>
 </div>
 
-<textarea id="texto" placeholder="Ejemplo: Hola Santiago, soy yo! Sí, Papá Noel..."></textarea>
-<br>
-
-<button onclick="hablar()">🔊 Que Papá Noel lo diga</button>
-<button class="music-btn" onclick="toggleMusica()" id="btnMusica">🎵 Música: OFF</button>
-
-<br>
-<label>Voces disponibles:</label>
-<select id="voces"></select>
+<div id="escena">
+  <div class="foto-wrap">
+    <img src="santa.png" id="santaGrande">
+    <div id="boca"></div>
+  </div>
+  <div id="subtitulo"></div>
+  <button id="btnVolver" onclick="volver()">✖ Terminar</button>
+</div>
 
 <script>
   const synth = window.speechSynthesis;
-  const selectVoces = document.getElementById('voces');
-  const santaImg = document.getElementById('santa');
+  const santaGrande = document.getElementById('santaGrande');
+  const preview = document.getElementById('preview');
   const boca = document.getElementById('boca');
-  let vocesEspanol = [];
   let musicaOn = false;
   let audioCtx;
   let musicTimer;
 
-  function cargarVoces() {
-    const voces = synth.getVoices();
-    vocesEspanol = voces.filter(v => v.lang.startsWith('es'));
-    selectVoces.innerHTML = '';
-    vocesEspanol.forEach((v, i) => {
-      const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = v.name + ' (' + v.lang + ')';
-      selectVoces.appendChild(opt);
-    });
-  }
-  cargarVoces();
-  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = cargarVoces;
-
   function hablar() {
-    const texto = document.getElementById('texto').value;
+    let texto = document.getElementById('texto').value;
+    const nombre = document.getElementById('nombreInput').value.trim();
+    if (nombre) texto = texto.split('[nombre]').join(nombre);
     if (!texto.trim()) { alert('Escribí un mensaje primero'); return; }
-    synth.cancel();
-    const utterance = new SpeechSynthesisUtterance(texto);
-    utterance.lang = 'es-AR';
-    utterance.pitch = 0.5;
-    utterance.rate = 0.9;
-    if (vocesEspanol[selectVoces.value]) utterance.voice = vocesEspanol[selectVoces.value];
 
-    let bocaInterval;
-    utterance.onstart = () => {
-      santaImg.classList.add('hablando');
-      bocaInterval = setInterval(() => {
-        boca.style.transform = boca.style.transform.includes('scaleY(1)') ? 'translateX(-50%) scaleY(0.2)' : 'translateX(-50%) scaleY(1)';
-      }, 110);
+    synth.cancel();
+    // Voz grave en TODA la frase
+    const fraseCompleta = "Ho ho... " + texto + " ...Ho ho!";
+    const utterance = new SpeechSynthesisUtterance(fraseCompleta);
+    utterance.lang = 'es-AR';
+    utterance.pitch = 0.15; // voz bien grave de Papá Noel
+    utterance.rate = 0.85;
+    utterance.volume = 1;
+
+    document.getElementById('panel').style.display = 'none';
+    document.getElementById('escena').style.display = 'flex';
+    document.getElementById('subtitulo').textContent = '“' + texto + '”';
+
+    let esRisa = false;
+
+    utterance.onboundary = (e) => {
+      // Cada sílaba/palabra mueve boca y cara
+      boca.classList.add('abierto');
+      santaGrande.style.transform = `scale(1.05) rotate(${(Math.random()-0.5)*3}deg)`;
+      if (esRisa) {
+        boca.style.height = '60px';
+        santaGrande.classList.add('riendo');
+      }
+      setTimeout(() => {
+        boca.classList.remove('abierto');
+        santaGrande.style.transform = 'scale(1)';
+        boca.style.height = '40px';
+      }, 130);
     };
+
+    utterance.onstart = () => {
+      santaGrande.classList.add('hablando');
+      // Detecta risa en el texto
+      if (fraseCompleta.toLowerCase().includes('jaja') || fraseCompleta.toLowerCase().includes('ho ho')) {
+        esRisa = true;
+      }
+    };
+
     utterance.onend = () => {
-      santaImg.classList.remove('hablando');
-      clearInterval(bocaInterval);
-      boca.style.transform = 'translateX(-50%) scaleY(0.2)';
+      santaGrande.classList.remove('hablando');
+      santaGrande.classList.remove('riendo');
+      boca.classList.remove('abierto');
+      volver();
     };
 
     synth.speak(utterance);
   }
 
-  // Musica: Jingle Bells con Web Audio (villancico publico)
+  function volver() {
+    if (synth.speaking) synth.cancel();
+    document.getElementById('escena').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+  }
+
   function toggleMusica() {
     const btn = document.getElementById('btnMusica');
     if (musicaOn) {
-      musicaOn = false;
-      clearInterval(musicTimer);
+      musicaOn = false; clearInterval(musicTimer);
       if (audioCtx) audioCtx.close();
-      btn.textContent = '🎵 Música: OFF';
-      return;
+      btn.textContent = '🎵 Música: OFF'; return;
     }
-    musicaOn = true;
-    btn.textContent = '🎵 Música: ON';
+    musicaOn = true; btn.textContent = '🎵 Música: ON';
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
     const notas = [
       [329.63,0,0.3],[329.63,0.3,0.3],[329.63,0.6,0.6],
       [329.63,1.2,0.3],[329.63,1.5,0.3],[329.63,1.8,0.6],
       [329.63,2.4,0.3],[392,2.7,0.3],[261.63,3.0,0.3],[293.66,3.3,0.6],[329.63,4.2,0.9]
     ];
-
     function tocar() {
       notas.forEach(([freq, inicio, dur]) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = freq;
+        osc.type = 'triangle'; osc.frequency.value = freq;
         gain.gain.setValueAtTime(0.15, audioCtx.currentTime + inicio);
         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + inicio + dur);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        osc.connect(gain); gain.connect(audioCtx.destination);
         osc.start(audioCtx.currentTime + inicio);
         osc.stop(audioCtx.currentTime + inicio + dur);
       });
     }
-    tocar();
-    musicTimer = setInterval(tocar, 5300);
-  }
-
-  // Nieve cayendo
-  for (let i=0; i<30; i++) {
-    const s = document.createElement('div');
-    s.className = 'snow';
-    s.textContent = '❄';
-    s.style.left = Math.random()*100 + 'vw';
-    s.style.animationDuration = (Math.random()*5+5)+'s';
-    s.style.opacity = Math.random()*0.7+0.3;
-    document.body.appendChild(s);
+    tocar(); musicTimer = setInterval(tocar, 5300);
   }
 </script>
 
 </body>
-  </html>
+</html>
