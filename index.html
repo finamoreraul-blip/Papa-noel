@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papá Noel Personalizado</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(#0b3d2e, #145a40);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  .foto-contenedor {
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  .santa-img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid gold;
+    box-shadow: 0 0 30px rgba(255,215,0,0.6);
+  }
+  .santa-img.hablando {
+    animation: pulse 0.5s infinite alternate;
+  }
+  @keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.04); }
+  }
+  #boca {
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    width: 55px;
+    height: 25px;
+    background: #4a0d0d;
+    border-radius: 50%;
+    transform: translateX(-50%) scaleY(0.2);
+    transition: transform 0.1s;
+    border: 2px solid #ffb3b3;
+  }
+  h1 { color: gold; margin: 15px 0 5px 0; font-size: 32px; }
+  p.sub { margin-top: 0; opacity: 0.9; }
+  textarea {
+    width: 90%;
+    max-width: 500px;
+    height: 120px;
+    border-radius: 12px;
+    border: none;
+    padding: 15px;
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  button {
+    margin: 10px 5px;
+    background: #d62828;
+    color: white;
+    border: none;
+    padding: 14px 26px;
+    font-size: 17px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  button.music-btn { background: #1d6fa5; }
+  select {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 8px;
+    max-width: 90%;
+  }
+  .snow {
+    position: fixed;
+    top: -10px;
+    color: white;
+    font-size: 18px;
+    animation: fall linear infinite;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { transform: translateY(100vh); }
+  }
+</style>
+</head>
+<body>
+
+<h1>🎅 Papá Noel</h1>
+<p class="sub">Escribí tu mensaje y yo lo digo</p>
+
+<div class="foto-contenedor">
+  <img src="santa.png" alt="Papá Noel" class="santa-img" id="santa">
+  <div id="boca"></div>
+</div>
+
+<textarea id="texto" placeholder="Ejemplo: Hola Santiago, soy yo! Sí, Papá Noel..."></textarea>
+<br>
+
+<button onclick="hablar()">🔊 Que Papá Noel lo diga</button>
+<button class="music-btn" onclick="toggleMusica()" id="btnMusica">🎵 Música: OFF</button>
+
+<br>
+<label>Voces disponibles:</label>
+<select id="voces"></select>
+
+<script>
+  const synth = window.speechSynthesis;
+  const selectVoces = document.getElementById('voces');
+  const santaImg = document.getElementById('santa');
+  const boca = document.getElementById('boca');
+  let vocesEspanol = [];
+  let musicaOn = false;
+  let audioCtx;
+  let musicTimer;
+
+  function cargarVoces() {
+    const voces = synth.getVoices();
+    vocesEspanol = voces.filter(v => v.lang.startsWith('es'));
+    selectVoces.innerHTML = '';
+    vocesEspanol.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = v.name + ' (' + v.lang + ')';
+      selectVoces.appendChild(opt);
+    });
+  }
+  cargarVoces();
+  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = cargarVoces;
+
+  function hablar() {
+    const texto = document.getElementById('texto').value;
+    if (!texto.trim()) { alert('Escribí un mensaje primero'); return; }
+    synth.cancel();
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-AR';
+    utterance.pitch = 0.5;
+    utterance.rate = 0.9;
+    if (vocesEspanol[selectVoces.value]) utterance.voice = vocesEspanol[selectVoces.value];
+
+    let bocaInterval;
+    utterance.onstart = () => {
+      santaImg.classList.add('hablando');
+      bocaInterval = setInterval(() => {
+        boca.style.transform = boca.style.transform.includes('scaleY(1)') ? 'translateX(-50%) scaleY(0.2)' : 'translateX(-50%) scaleY(1)';
+      }, 110);
+    };
+    utterance.onend = () => {
+      santaImg.classList.remove('hablando');
+      clearInterval(bocaInterval);
+      boca.style.transform = 'translateX(-50%) scaleY(0.2)';
+    };
+
+    synth.speak(utterance);
+  }
+
+  // Musica: Jingle Bells con Web Audio (villancico publico)
+  function toggleMusica() {
+    const btn = document.getElementById('btnMusica');
+    if (musicaOn) {
+      musicaOn = false;
+      clearInterval(musicTimer);
+      if (audioCtx) audioCtx.close();
+      btn.textContent = '🎵 Música: OFF';
+      return;
+    }
+    musicaOn = true;
+    btn.textContent = '🎵 Música: ON';
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    const notas = [
+      [329.63,0,0.3],[329.63,0.3,0.3],[329.63,0.6,0.6],
+      [329.63,1.2,0.3],[329.63,1.5,0.3],[329.63,1.8,0.6],
+      [329.63,2.4,0.3],[392,2.7,0.3],[261.63,3.0,0.3],[293.66,3.3,0.6],[329.63,4.2,0.9]
+    ];
+
+    function tocar() {
+      notas.forEach(([freq, inicio, dur]) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + inicio);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + inicio + dur);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + inicio);
+        osc.stop(audioCtx.currentTime + inicio + dur);
+      });
+    }
+    tocar();
+    musicTimer = setInterval(tocar, 5300);
+  }
+
+  // Nieve cayendo
+  for (let i=0; i<30; i++) {
+    const s = document.createElement('div');
+    s.className = 'snow';
+    s.textContent = '❄';
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.animationDuration = (Math.random()*5+5)+'s';
+    s.style.opacity = Math.random()*0.7+0.3;
+    document.body.appendChild(s);
+  }
+</script>
+
+</body>
+  </html>
