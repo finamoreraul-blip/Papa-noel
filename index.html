@@ -14,19 +14,15 @@ header p{color:var(--texto2);font-size:1.1rem}
 .filtros{max-width:1100px;margin:20px auto 0;display:flex;gap:10px;flex-wrap:wrap;padding:0 16px}
 .filtros button{background:var(--card);color:var(--texto);border:1px solid var(--borde);padding:10px 20px;border-radius:25px;cursor:pointer;font-size:1rem}
 .filtros button.activo{background:var(--rosa);border-color:var(--rosa)}
-.carrusel{max-width:1100px;margin:20px auto;border-radius:22px;overflow:hidden;position:relative;height:340px;background:#000;border:1px solid var(--borde)}
-.carrusel img{width:100%;height:340px;object-fit:cover;display:none}
-.carrusel img.activo{display:block;animation:fade .5s}
-@keyframes fade{from{opacity:.4}to{opacity:1}}
-.puntos{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:5}
-.punto{width:12px;height:12px;background:rgba(255,255,255,.5);border-radius:50%;cursor:pointer}
-.punto.activo{background:var(--rosa)}
-.carr-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:white;border:none;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:22px;z-index:5}
-.carr-prev{left:12px}
-.carr-next{right:12px}
 .grid{max-width:1100px;margin:20px auto 130px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;padding:0 16px}
 .card{background:var(--card);border:1px solid var(--borde);border-radius:20px;overflow:hidden}
-.card img{width:100%;height:320px;object-fit:cover;cursor:zoom-in}
+.mini-carrusel{position:relative;height:320px;background:#000;overflow:hidden}
+.mini-carrusel img{width:100%;height:320px;object-fit:cover;display:none;cursor:zoom-in}
+.mini-carrusel img.activo{display:block;animation:fade .5s}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+.mini-puntos{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2}
+.mini-punto{width:9px;height:9px;background:rgba(255,255,255,.5);border-radius:50%}
+.mini-punto.activo{background:var(--rosa)}
 .card-body{padding:16px}
 .card-body h3{font-size:1.25rem}
 .precio{color:var(--rosa);font-weight:800;font-size:1.4rem;margin:6px 0}
@@ -45,15 +41,20 @@ header p{color:var(--texto2);font-size:1.1rem}
 .modal,.panel-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
 .modal.open,.panel-modal.open{display:flex}
 .modal-box,.panel-box{background:var(--card);border:1px solid var(--borde);border-radius:20px;max-width:600px;width:100%;max-height:92vh;overflow-y:auto;padding:20px}
-.modal-box img{width:100%;border-radius:16px;max-height:450px;object-fit:cover}
+.modal-carrusel{position:relative;height:400px;background:#000;border-radius:16px;overflow:hidden}
+.modal-carrusel img{width:100%;height:400px;object-fit:cover;display:none}
+.modal-carrusel img.activo{display:block}
+.modal-puntos{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.modal-punto{width:10px;height:10px;background:rgba(255,255,255,.5);border-radius:50%;cursor:pointer}
+.modal-punto.activo{background:var(--rosa)}
 .talle-btn{display:inline-block;margin:5px;padding:10px 16px;border-radius:10px;border:1px solid var(--borde);background:#141416;color:white;cursor:pointer;font-size:1.1rem}
 .talle-btn.sel{background:var(--rosa);border-color:var(--rosa)}
 .panel-btn{position:fixed;bottom:100px;right:20px;background:white;color:black;border:none;width:60px;height:60px;border-radius:50%;cursor:pointer;z-index:60;font-size:26px}
 .panel-box input,.panel-box textarea,.panel-box select{width:100%;padding:13px;border:1px solid var(--borde);border-radius:12px;margin:8px 0;background:#141416;color:white;font-size:1.1rem}
 .small{font-size:.95rem;color:var(--texto2)}
-.muestra-thumb{display:inline-block;position:relative;margin:6px}
-.muestra-thumb img{width:80px;height:80px;border-radius:10px;object-fit:cover}
-.muestra-thumb button{position:absolute;top:-6px;right:-6px;background:red;color:white;border:none;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px}
+.foto-prev{display:inline-block;position:relative;margin:5px}
+.foto-prev img{width:90px;height:90px;border-radius:10px;object-fit:cover}
+.foto-prev button{position:absolute;top:-6px;right:-6px;background:red;color:white;border:none;width:24px;height:24px;border-radius:50%;cursor:pointer}
 </style>
 </head>
 <body>
@@ -62,12 +63,6 @@ header p{color:var(--texto2);font-size:1.1rem}
 <h1>👗 Tienda de Ropa</h1>
 <p>Tres Arroyos - Envíos a todo el país - Precios en Pesos</p>
 </header>
-
-<div class="carrusel" id="carruselMuestras">
-<button class="carr-btn carr-prev" onclick="moverSlide(-1)">❮</button>
-<button class="carr-btn carr-next" onclick="moverSlide(1)">❯</button>
-<div class="puntos" id="puntosMuestras"></div>
-</div>
 
 <div class="filtros" id="filtros"></div>
 <div class="grid" id="grid"></div>
@@ -88,7 +83,7 @@ header p{color:var(--texto2);font-size:1.1rem}
 <div class="modal" id="modalProd">
 <div class="modal-box">
 <button onclick="cerrarModal()" style="float:right;background:#333;color:white;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px">✕</button>
-<img id="mImg" src="">
+<div class="modal-carrusel" id="modalCarrusel"></div>
 <h2 id="mTitle" style="margin:12px 0 4px;font-size:1.6rem"></h2>
 <div class="precio" id="mPrice"></div>
 <p id="mDesc" style="margin:12px 0;color:var(--texto2);font-size:1.1rem"></p>
@@ -101,34 +96,19 @@ header p{color:var(--texto2);font-size:1.1rem}
 
 <div class="panel-modal" id="panelModal">
 <div class="panel-box">
-<h2>Panel - Cargar Ropa</h2>
+<h2>Panel - Cargar Publicación</h2>
 <div id="loginBox">
 <input type="password" id="passInput" placeholder="Contraseña (admin123)">
 <button class="btn" onclick="login()">Entrar</button>
 </div>
 <div id="adminBox" style="display:none">
 
-<p class="small">URL de tu Google Sheet (opcional):</p>
-<input id="sheetUrl" placeholder="https://script.google.com/.../exec">
-<button class="btn" style="background:#555" onclick="guardarUrl()">Guardar URL</button>
-<hr style="margin:14px 0;border-color:var(--borde)">
 <label>Número WhatsApp (ej: 5492983123456)</label>
 <input id="waNumber" placeholder="549...">
 <button class="btn" style="background:#555" onclick="guardarWA()">Guardar WhatsApp</button>
 <hr style="margin:14px 0;border-color:var(--borde)">
 
-<h3>AGREGAR FOTOS A MUESTRAS</h3>
-<p class="small">Subí fotos lindas de la tienda para el carrusel de arriba</p>
-<input type="file" id="muestraFile" accept="image/*" onchange="previsualizarMuestra(event)">
-<div id="previewMuestraBox" style="border:2px dashed var(--borde);border-radius:12px;padding:10px;text-align:center;margin:10px 0">
-<img id="pPreviewMuestra" src="" style="max-width:100%;max-height:200px;border-radius:10px;display:none">
-<p id="pPreviewMuestraText" class="small">Vista previa muestra</p>
-</div>
-<button class="btn" onclick="agregarMuestra()">Agregar esta foto a Muestras</button>
-<div id="listaMuestras" style="margin-top:10px"></div>
-
-<hr style="margin:18px 0;border-color:var(--borde)">
-<h3>NUEVO PRODUCTO</h3>
+<h3>NUEVA PUBLICACIÓN - 3 FOTOS</h3>
 <label>Nombre del modelo</label>
 <input id="pName" placeholder="Ej: Vestido midi floreado">
 <label>Precio en ARS</label>
@@ -141,107 +121,49 @@ header p{color:var(--texto2);font-size:1.1rem}
 <input id="pTalles" placeholder="Ej: S, M, L, XL">
 <label>Stock</label>
 <input id="pStock" type="number" placeholder="5">
-<label>Foto del producto</label>
-<input type="file" id="pFotoFile" accept="image/*" onchange="previsualizarFoto(event)">
+<label>Fotos del producto (elegí hasta 3, se suben juntas)</label>
+<input type="file" id="pFotoFile" accept="image/*" multiple onchange="previsualizarFotos(event)">
 <div id="previewBox" style="border:2px dashed var(--borde);border-radius:12px;padding:10px;text-align:center;margin:10px 0">
-<img id="pPreview" src="" style="max-width:100%;max-height:250px;border-radius:10px;display:none">
-<p id="pPreviewText" class="small">Vista previa de la foto</p>
+<p id="pPreviewText" class="small">Vista previa de las fotos</p>
+<div id="pPreviewGrid"></div>
 </div>
-<button class="btn" onclick="guardarProducto()">Guardar Producto</button>
-<h3 style="margin-top:18px">Productos cargados</h3>
+<button class="btn" onclick="guardarProducto()">Guardar Publicación</button>
+<h3 style="margin-top:18px">Publicaciones cargadas</h3>
 <div id="listaAdmin"></div>
 </div>
 </div>
 </div>
 
 <script>
-const SHEET_KEY='ropa_sheet_url';
 const WA_KEY='ropa_wa';
 const PASS_KEY='ropa_pass';
 const LOCAL_KEY='ropa_productos_local';
-const MUESTRAS_KEY='ropa_muestras';
-let products=[];
-let muestras=JSON.parse(localStorage.getItem(MUESTRAS_KEY)||'[]');
-if(muestras.length===0){
-  muestras=[
-    'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900',
-    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900',
-    'https://images.unsplash.com/photo-1445205170230-053b83016050?w=900'
-  ];
-  localStorage.setItem(MUESTRAS_KEY,JSON.stringify(muestras));
-}
+let products=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');
 let cart=JSON.parse(localStorage.getItem('ropa_cart_v2')||'[]');
 let filtroActual='Todos';
 let productoModal=null;
 let talleSeleccionado=null;
-let fotoBase64='';
-let fotoMuestraBase64='';
-let slideIdx=0;
-let slideTimer=null;
+let fotosTemp=[];
+let modalFotos=[];
+let modalIdx=0;
+let modalTimer=null;
 
-function getSheet(){return localStorage.getItem(SHEET_KEY)||''}
 function getWA(){return localStorage.getItem(WA_KEY)||'5492983123456'}
 function getPass(){return localStorage.getItem(PASS_KEY)||'admin123'}
 function fmt(n){return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)}
 
-// CARRUSEL MUESTRAS QUE PASA SOLO
-function renderCarruselMuestras(){
-  const c=document.getElementById('carruselMuestras');
-  const puntos=document.getElementById('puntosMuestras');
-  let imgsHtml='';
-  muestras.forEach((src,i)=>{
-    imgsHtml+=`<img src="${src}" class="${i===slideIdx?'activo':''}" data-i="${i}">`;
-  });
-  c.querySelectorAll('img').forEach(e=>e.remove());
-  c.insertAdjacentHTML('afterbegin',imgsHtml);
-  puntos.innerHTML=muestras.map((_,i)=>`<div class="punto ${i===slideIdx?'activo':''}" onclick="irASlide(${i})"></div>`).join('');
-  reiniciarAuto();
-}
-function irASlide(i){
-  slideIdx=i;
-  if(slideIdx>=muestras.length)slideIdx=0;
-  if(slideIdx<0)slideIdx=muestras.length-1;
-  document.querySelectorAll('#carruselMuestras img').forEach((img,idx)=>img.classList.toggle('activo',idx===slideIdx));
-  document.querySelectorAll('#puntosMuestras .punto').forEach((p,idx)=>p.classList.toggle('activo',idx===slideIdx));
-  reiniciarAuto();
-}
-function moverSlide(d){irASlide(slideIdx+d)}
-function reiniciarAuto(){
-  clearInterval(slideTimer);
-  slideTimer=setInterval(()=>{irASlide(slideIdx+1)},3500);
-}
-// swipe para el celu
-let touchX=0;
-document.getElementById('carruselMuestras').addEventListener('touchstart',e=>{touchX=e.touches[0].clientX},{passive:true});
-document.getElementById('carruselMuestras').addEventListener('touchend',e=>{
-  const diff=touchX-e.changedTouches[0].clientX;
-  if(Math.abs(diff)>40){moverSlide(diff>0?1:-1)}
-},{passive:true});
-
-async function cargarProductos(){
-  const url=getSheet();
-  if(url){
-    try{
-      const r=await fetch(url);
-      products=await r.json();
-      renderTodo();
-      return;
-    }catch(e){}
-  }
-  products=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');
-  renderTodo();
-}
-
 function renderTodo(){
-  renderCarruselMuestras();
   const cats=['Todos',...new Set(products.map(p=>p.categoria).filter(Boolean))];
   document.getElementById('filtros').innerHTML=cats.map(c=>`<button class="${c===filtroActual?'activo':''}" onclick="filtroActual='${c}';renderTodo()">${c}</button>`).join('');
   const lista=products.filter(p=>filtroActual==='Todos'||p.categoria===filtroActual);
   const g=document.getElementById('grid');
   g.innerHTML=lista.map(p=>{
+    const fotos=(p.fotos && p.fotos.length)?p.fotos:(p.foto?[p.foto]:['https://via.placeholder.com/600']);
     const talles=(p.talles||'').split(',').filter(Boolean).join(' • ');
+    let imgs=fotos.map((f,i)=>`<img src="${f}" class="${i===0?'activo':''}" onclick="abrirModal(${p.id})">`).join('');
+    let puntos=fotos.map((_,i)=>`<div class="mini-punto ${i===0?'activo':''}"></div>`).join('');
     return `<div class="card">
-      <img src="${p.foto||'https://via.placeholder.com/600'}" onclick="abrirModal(${p.id})">
+      <div class="mini-carrusel" data-id="${p.id}">${imgs}<div class="mini-puntos">${puntos}</div></div>
       <div class="card-body">
         <h3>${p.nombre}</h3>
         <div class="precio">${fmt(Number(p.precio))}</div>
@@ -250,14 +172,30 @@ function renderTodo(){
         <button class="btn" onclick="abrirModal(${p.id})">Ver y Elegir Talle</button>
       </div>
     </div>`;
-  }).join('')||'<p style="grid-column:1/-1;text-align:center">Todavía no hay productos. Cargá desde el panel ⚙️</p>';
-  renderAdminList();renderListaMuestras();actualizarCart();
+  }).join('')||'<p style="grid-column:1/-1;text-align:center">Todavía no hay publicaciones. Cargá desde el panel ⚙️</p>';
+  renderAdminList();actualizarCart();
 }
+
+// Carrusel de cada tarjeta que pasa solo
+setInterval(()=>{
+  document.querySelectorAll('.mini-carrusel').forEach(c=>{
+    const imgs=c.querySelectorAll('img');
+    if(imgs.length<2)return;
+    let actual=[...imgs].findIndex(i=>i.classList.contains('activo'));
+    imgs[actual].classList.remove('activo');
+    c.querySelectorAll('.mini-punto')[actual].classList.remove('activo');
+    let sig=(actual+1)%imgs.length;
+    imgs[sig].classList.add('activo');
+    c.querySelectorAll('.mini-punto')[sig].classList.add('activo');
+  });
+},3000);
 
 function abrirModal(id){
   productoModal=products.find(p=>String(p.id)===String(id));
   talleSeleccionado=null;
-  document.getElementById('mImg').src=productoModal.foto||'https://via.placeholder.com/600';
+  modalFotos=(productoModal.fotos && productoModal.fotos.length)?productoModal.fotos:(productoModal.foto?[productoModal.foto]:['https://via.placeholder.com/600']);
+  modalIdx=0;
+  document.getElementById('modalCarrusel').innerHTML=modalFotos.map((f,i)=>`<img src="${f}" class="${i===0?'activo':''}">`).join('')+`<div class="modal-puntos">${modalFotos.map((_,i)=>`<div class="modal-punto ${i===0?'activo':''}" onclick="irModalSlide(${i})"></div>`).join('')}</div>`;
   document.getElementById('mTitle').textContent=productoModal.nombre;
   document.getElementById('mPrice').textContent=fmt(Number(productoModal.precio));
   document.getElementById('mDesc').textContent=productoModal.descripcion||'';
@@ -266,9 +204,19 @@ function abrirModal(id){
   document.getElementById('mTalles').innerHTML=talles.length? talles.map(t=>`<span class="talle-btn" onclick="selTalle(this,'${t}')">${t}</span>`).join('') : `<span class="talle-btn sel">Talle Único</span>`;
   if(!talles.length)talleSeleccionado='Único';
   document.getElementById('modalProd').classList.add('open');
+  clearInterval(modalTimer);
+  modalTimer=setInterval(()=>{irModalSlide(modalIdx+1)},3500);
+}
+function irModalSlide(i){
+  if(modalFotos.length<2)return;
+  modalIdx=i;
+  if(modalIdx>=modalFotos.length)modalIdx=0;
+  if(modalIdx<0)modalIdx=modalFotos.length-1;
+  document.querySelectorAll('#modalCarrusel img').forEach((img,idx)=>img.classList.toggle('activo',idx===modalIdx));
+  document.querySelectorAll('#modalCarrusel .modal-punto').forEach((p,idx)=>p.classList.toggle('activo',idx===modalIdx));
 }
 function selTalle(el,t){document.querySelectorAll('.talle-btn').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');talleSeleccionado=t}
-function cerrarModal(){document.getElementById('modalProd').classList.remove('open')}
+function cerrarModal(){document.getElementById('modalProd').classList.remove('open');clearInterval(modalTimer)}
 function agregarDesdeModal(){
   if(!talleSeleccionado) return alert('Elegí un talle');
   agregarCarrito(productoModal.id, talleSeleccionado);
@@ -285,8 +233,9 @@ function actualizarCart(){
   let total=0,html='';
   cart.forEach(i=>{
     const p=products.find(pr=>String(pr.id)===String(i.id));if(!p)return;
+    const fotoPrincipal=(p.fotos&&p.fotos[0])||p.foto||'https://via.placeholder.com/100';
     total+=Number(p.precio)*i.qty;
-    html+=`<div class="cart-item"><img src="${p.foto}"><div style="flex:1"><b>${p.nombre}</b><br>${fmt(Number(p.precio))} x ${i.qty}<br><small>Talle: ${i.talle}</small></div><button onclick="quitarItem('${i.key}')" style="background:#333;color:white;border:none;padding:8px;border-radius:8px">🗑</button></div>`;
+    html+=`<div class="cart-item"><img src="${fotoPrincipal}"><div style="flex:1"><b>${p.nombre}</b><br>${fmt(Number(p.precio))} x ${i.qty}<br><small>Talle: ${i.talle}</small></div><button onclick="quitarItem('${i.key}')" style="background:#333;color:white;border:none;padding:8px;border-radius:8px">🗑</button></div>`;
   });
   document.getElementById('cartBody').innerHTML=html||'<p style="text-align:center;color:#999;margin-top:20px">Carrito vacío</p>';
   document.getElementById('cartTotal').textContent=fmt(total);
@@ -305,9 +254,8 @@ function enviarWhatsApp(){
   window.open(`https://wa.me/${getWA()}?text=${msg}`,'_blank');
 }
 
-function abrirPanel(){document.getElementById('panelModal').classList.add('open');document.getElementById('sheetUrl').value=getSheet();document.getElementById('waNumber').value=getWA();renderAdminList();renderListaMuestras()}
+function abrirPanel(){document.getElementById('panelModal').classList.add('open');document.getElementById('waNumber').value=getWA();renderAdminList()}
 function login(){if(document.getElementById('passInput').value===getPass()){document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block'}else alert('Clave incorrecta')}
-function guardarUrl(){localStorage.setItem(SHEET_KEY,document.getElementById('sheetUrl').value.trim());cargarProductos();alert('URL guardada')}
 function guardarWA(){localStorage.setItem(WA_KEY,document.getElementById('waNumber').value.trim());alert('WhatsApp guardado')}
 
 function comprimirImagen(file,cb){
@@ -327,49 +275,25 @@ function comprimirImagen(file,cb){
   }
   reader.readAsDataURL(file);
 }
-function previsualizarFoto(e){
-  const file=e.target.files[0];if(!file)return;
-  comprimirImagen(file,function(b64){
-    fotoBase64=b64;
-    document.getElementById('pPreview').src=b64;
-    document.getElementById('pPreview').style.display='block';
-    document.getElementById('pPreviewText').style.display='none';
+function previsualizarFotos(e){
+  const files=[...e.target.files].slice(0,3);
+  if(files.length===0)return;
+  fotosTemp=[];
+  document.getElementById('pPreviewGrid').innerHTML='';
+  files.forEach(f=>{
+    comprimirImagen(f,function(b64){
+      fotosTemp.push(b64);
+      document.getElementById('pPreviewGrid').innerHTML+=`<div class="foto-prev"><img src="${b64}"></div>`;
+      document.getElementById('pPreviewText').style.display='none';
+    });
   });
-}
-function previsualizarMuestra(e){
-  const file=e.target.files[0];if(!file)return;
-  comprimirImagen(file,function(b64){
-    fotoMuestraBase64=b64;
-    document.getElementById('pPreviewMuestra').src=b64;
-    document.getElementById('pPreviewMuestra').style.display='block';
-    document.getElementById('pPreviewMuestraText').style.display='none';
-  });
-}
-function agregarMuestra(){
-  if(!fotoMuestraBase64)return alert('Primero elegí una foto');
-  muestras.push(fotoMuestraBase64);
-  localStorage.setItem(MUESTRAS_KEY,JSON.stringify(muestras));
-  fotoMuestraBase64='';
-  document.getElementById('muestraFile').value='';
-  document.getElementById('pPreviewMuestra').style.display='none';
-  document.getElementById('pPreviewMuestraText').style.display='block';
-  renderCarruselMuestras();renderListaMuestras();
-  alert('Muestra agregada al carrusel!');
-}
-function renderListaMuestras(){
-  document.getElementById('listaMuestras').innerHTML=muestras.map((m,i)=>`<div class="muestra-thumb"><img src="${m}"><button onclick="borrarMuestra(${i})">✕</button></div>`).join('');
-}
-function borrarMuestra(i){
-  muestras.splice(i,1);
-  localStorage.setItem(MUESTRAS_KEY,JSON.stringify(muestras));
-  if(slideIdx>=muestras.length)slideIdx=0;
-  renderCarruselMuestras();renderListaMuestras();
 }
 
 async function guardarProducto(){
   const nombre=document.getElementById('pName').value.trim();
   const precio=document.getElementById('pPrice').value;
   if(!nombre||!precio)return alert('Nombre y precio son obligatorios');
+  if(fotosTemp.length===0)return alert('Subí al menos 1 foto');
   const body={
     id:Date.now(),
     nombre,
@@ -378,35 +302,29 @@ async function guardarProducto(){
     categoria:document.getElementById('pCat').value,
     talles:document.getElementById('pTalles').value,
     stock:document.getElementById('pStock').value,
-    foto:fotoBase64
+    fotos:fotosTemp
   };
-  const url=getSheet();
-  if(url){
-    try{await fetch(url,{method:'POST',body:JSON.stringify({action:'add',...body})});}catch(e){}
-  }else{
-    const locales=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');
-    locales.push(body);
-    localStorage.setItem(LOCAL_KEY,JSON.stringify(locales));
-  }
-  fotoBase64='';
+  products.push(body);
+  localStorage.setItem(LOCAL_KEY,JSON.stringify(products));
+  fotosTemp=[];
   document.getElementById('pName').value='';document.getElementById('pPrice').value='';document.getElementById('pDesc').value='';
   document.getElementById('pCat').value='';document.getElementById('pTalles').value='';document.getElementById('pStock').value='';document.getElementById('pFotoFile').value='';
-  document.getElementById('pPreview').style.display='none';document.getElementById('pPreviewText').style.display='block';
-  cargarProductos();alert('Producto guardado!');
+  document.getElementById('pPreviewGrid').innerHTML='';document.getElementById('pPreviewText').style.display='block';
+  renderTodo();alert('Publicación guardada con '+body.fotos.length+' foto(s)!');
 }
 function renderAdminList(){
-  document.getElementById('listaAdmin').innerHTML=products.map(p=>`<div style="display:flex;gap:10px;align-items:center;background:#141416;padding:8px;border-radius:10px;margin:8px 0"><img src="${p.foto}" style="width:50px;height:50px;border-radius:8px;object-fit:cover"><div style="flex:1"><b>${p.nombre}</b><br>${fmt(Number(p.precio))} - Talles: ${p.talles||'Único'}</div><button onclick="borrarProd('${p.id}')" style="background:#3a0a18;color:white;border:none;padding:8px;border-radius:8px">Borrar</button></div>`).join('')||'<p class="small">Sin productos</p>';
+  document.getElementById('listaAdmin').innerHTML=products.map(p=>{
+    const fotoPrincipal=(p.fotos&&p.fotos[0])||p.foto||'https://via.placeholder.com/100';
+    return `<div style="display:flex;gap:10px;align-items:center;background:#141416;padding:8px;border-radius:10px;margin:8px 0"><img src="${fotoPrincipal}" style="width:50px;height:50px;border-radius:8px;object-fit:cover"><div style="flex:1"><b>${p.nombre}</b><br>${fmt(Number(p.precio))} - ${p.categoria||'Sin cat'} - Talles: ${p.talles||'Único'}<br><small>${(p.fotos||[]).length} foto(s)</small></div><button onclick="borrarProd('${p.id}')" style="background:#3a0a18;color:white;border:none;padding:8px;border-radius:8px">Borrar</button></div>`;
+  }).join('')||'<p class="small">Sin publicaciones</p>';
 }
-async function borrarProd(id){
-  const url=getSheet();
-  if(url){try{await fetch(url,{method:'POST',body:JSON.stringify({action:'delete',id})});}catch(e){}}
-  let locales=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');
-  locales=locales.filter(p=>String(p.id)!==String(id));
-  localStorage.setItem(LOCAL_KEY,JSON.stringify(locales));
-  cargarProductos();
+function borrarProd(id){
+  products=products.filter(p=>String(p.id)!==String(id));
+  localStorage.setItem(LOCAL_KEY,JSON.stringify(products));
+  renderTodo();
 }
 document.getElementById('waFloat').href=`https://wa.me/${getWA()}?text=Hola!`;
-cargarProductos();
+renderTodo();
 </script>
 </body>
 </html>
