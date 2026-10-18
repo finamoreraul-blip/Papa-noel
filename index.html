@@ -138,7 +138,37 @@ header p{color:var(--texto2);font-size:1.1rem}
 const WA_KEY='ropa_wa';
 const PASS_KEY='ropa_pass';
 const LOCAL_KEY='ropa_productos_local';
-let products=JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]');
+let fotosMuestra=[
+  "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800",
+  "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800",
+  "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=800"
+];
+let fotosMuestra2=[
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800",
+  "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800",
+  "https://images.unsplash.com/photo-1445205170230-053b83016050?w=800"
+];
+let fotosMuestra3=[
+  "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800",
+  "https://images.unsplash.com/photo-1542272604-787c3835535d?w=800",
+  "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800"
+];
+let fotosMuestra4=[
+  "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800",
+  "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800",
+  "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800"
+];
+let productosMuestra=[
+  {id:1,nombre:"Vestido Midi Floral Verano",precio:28500,descripcion:"Vestido midi con estampa floral, tela fresquita de rayon. Ideal para el verano.",categoria:"Vestidos",talles:"S, M, L, XL",stock:8,fotos:fotosMuestra},
+  {id:2,nombre:"Conjunto Top + Pollera",precio:32000,descripcion:"Conjunto de top y pollera midi, tela elastizada que se adapta a todos los talles.",categoria:"Conjuntos",talles:"S, M, L",stock:5,fotos:fotosMuestra2},
+  {id:3,nombre:"Jean Mom + Campera de Jean",precio:45000,descripcion:"Jean mom tiro alto elastizado + campera de jean oversize. Combinalos como quieras.",categoria:"Jeans",talles:"36, 38, 40, 42",stock:6,fotos:fotosMuestra3},
+  {id:4,nombre:"Remera Oversize Blanca",precio:15000,descripcion:"Remera oversize de algodon peinado, fresca y super combinable.",categoria:"Remeras",talles:"S, M, L, XL",stock:12,fotos:fotosMuestra4}
+];
+let products=JSON.parse(localStorage.getItem(LOCAL_KEY)||'null');
+if(!products || products.length===0){
+  products=productosMuestra;
+  localStorage.setItem(LOCAL_KEY,JSON.stringify(products));
+}
 let cart=JSON.parse(localStorage.getItem('ropa_cart_v2')||'[]');
 let filtroActual='Todos';
 let productoModal=null;
