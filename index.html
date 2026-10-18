@@ -14,12 +14,16 @@ header p{color:var(--texto2);font-size:1.1rem}
 .filtros{max-width:1100px;margin:20px auto 0;display:flex;gap:10px;flex-wrap:wrap;padding:0 16px}
 .filtros button{background:var(--card);color:var(--texto);border:1px solid var(--borde);padding:10px 20px;border-radius:25px;cursor:pointer;font-size:1rem}
 .filtros button.activo{background:var(--rosa);border-color:var(--rosa)}
-.carrusel{max-width:1100px;margin:20px auto;border-radius:22px;overflow:hidden;position:relative;height:320px;background:#000;border:1px solid var(--borde)}
-.carrusel img{width:100%;height:320px;object-fit:cover;display:none}
-.carrusel img.activo{display:block}
-.puntos{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px}
-.punto{width:12px;height:12px;background:rgba(255,255,255,.4);border-radius:50%;cursor:pointer}
+.carrusel{max-width:1100px;margin:20px auto;border-radius:22px;overflow:hidden;position:relative;height:340px;background:#000;border:1px solid var(--borde)}
+.carrusel img{width:100%;height:340px;object-fit:cover;display:none}
+.carrusel img.activo{display:block;animation:fade .5s}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+.puntos{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:5}
+.punto{width:12px;height:12px;background:rgba(255,255,255,.5);border-radius:50%;cursor:pointer}
 .punto.activo{background:var(--rosa)}
+.carr-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:white;border:none;width:42px;height:42px;border-radius:50%;cursor:pointer;font-size:22px;z-index:5}
+.carr-prev{left:12px}
+.carr-next{right:12px}
 .grid{max-width:1100px;margin:20px auto 130px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;padding:0 16px}
 .card{background:var(--card);border:1px solid var(--borde);border-radius:20px;overflow:hidden}
 .card img{width:100%;height:320px;object-fit:cover;cursor:zoom-in}
@@ -47,6 +51,9 @@ header p{color:var(--texto2);font-size:1.1rem}
 .panel-btn{position:fixed;bottom:100px;right:20px;background:white;color:black;border:none;width:60px;height:60px;border-radius:50%;cursor:pointer;z-index:60;font-size:26px}
 .panel-box input,.panel-box textarea,.panel-box select{width:100%;padding:13px;border:1px solid var(--borde);border-radius:12px;margin:8px 0;background:#141416;color:white;font-size:1.1rem}
 .small{font-size:.95rem;color:var(--texto2)}
+.muestra-thumb{display:inline-block;position:relative;margin:6px}
+.muestra-thumb img{width:80px;height:80px;border-radius:10px;object-fit:cover}
+.muestra-thumb button{position:absolute;top:-6px;right:-6px;background:red;color:white;border:none;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px}
 </style>
 </head>
 <body>
@@ -56,8 +63,13 @@ header p{color:var(--texto2);font-size:1.1rem}
 <p>Tres Arroyos - Envíos a todo el país - Precios en Pesos</p>
 </header>
 
+<div class="carrusel" id="carruselMuestras">
+<button class="carr-btn carr-prev" onclick="moverSlide(-1)">❮</button>
+<button class="carr-btn carr-next" onclick="moverSlide(1)">❯</button>
+<div class="puntos" id="puntosMuestras"></div>
+</div>
+
 <div class="filtros" id="filtros"></div>
-<div class="carrusel" id="carrusel"></div>
 <div class="grid" id="grid"></div>
 
 <a class="float-wa" id="waFloat" href="#" target="_blank">💬</a>
@@ -95,7 +107,8 @@ header p{color:var(--texto2);font-size:1.1rem}
 <button class="btn" onclick="login()">Entrar</button>
 </div>
 <div id="adminBox" style="display:none">
-<p class="small">URL de tu Google Sheet (opcional, si no tenés, se guarda en el celu):</p>
+
+<p class="small">URL de tu Google Sheet (opcional):</p>
 <input id="sheetUrl" placeholder="https://script.google.com/.../exec">
 <button class="btn" style="background:#555" onclick="guardarUrl()">Guardar URL</button>
 <hr style="margin:14px 0;border-color:var(--borde)">
@@ -104,6 +117,18 @@ header p{color:var(--texto2);font-size:1.1rem}
 <button class="btn" style="background:#555" onclick="guardarWA()">Guardar WhatsApp</button>
 <hr style="margin:14px 0;border-color:var(--borde)">
 
+<h3>AGREGAR FOTOS A MUESTRAS</h3>
+<p class="small">Subí fotos lindas de la tienda para el carrusel de arriba</p>
+<input type="file" id="muestraFile" accept="image/*" onchange="previsualizarMuestra(event)">
+<div id="previewMuestraBox" style="border:2px dashed var(--borde);border-radius:12px;padding:10px;text-align:center;margin:10px 0">
+<img id="pPreviewMuestra" src="" style="max-width:100%;max-height:200px;border-radius:10px;display:none">
+<p id="pPreviewMuestraText" class="small">Vista previa muestra</p>
+</div>
+<button class="btn" onclick="agregarMuestra()">Agregar esta foto a Muestras</button>
+<div id="listaMuestras" style="margin-top:10px"></div>
+
+<hr style="margin:18px 0;border-color:var(--borde)">
+<h3>NUEVO PRODUCTO</h3>
 <label>Nombre del modelo</label>
 <input id="pName" placeholder="Ej: Vestido midi floreado">
 <label>Precio en ARS</label>
@@ -116,13 +141,12 @@ header p{color:var(--texto2);font-size:1.1rem}
 <input id="pTalles" placeholder="Ej: S, M, L, XL">
 <label>Stock</label>
 <input id="pStock" type="number" placeholder="5">
-<label>Foto del producto (se sube desde acá)</label>
+<label>Foto del producto</label>
 <input type="file" id="pFotoFile" accept="image/*" onchange="previsualizarFoto(event)">
 <div id="previewBox" style="border:2px dashed var(--borde);border-radius:12px;padding:10px;text-align:center;margin:10px 0">
 <img id="pPreview" src="" style="max-width:100%;max-height:250px;border-radius:10px;display:none">
 <p id="pPreviewText" class="small">Vista previa de la foto</p>
 </div>
-
 <button class="btn" onclick="guardarProducto()">Guardar Producto</button>
 <h3 style="margin-top:18px">Productos cargados</h3>
 <div id="listaAdmin"></div>
@@ -135,17 +159,64 @@ const SHEET_KEY='ropa_sheet_url';
 const WA_KEY='ropa_wa';
 const PASS_KEY='ropa_pass';
 const LOCAL_KEY='ropa_productos_local';
+const MUESTRAS_KEY='ropa_muestras';
 let products=[];
+let muestras=JSON.parse(localStorage.getItem(MUESTRAS_KEY)||'[]');
+if(muestras.length===0){
+  muestras=[
+    'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900',
+    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900',
+    'https://images.unsplash.com/photo-1445205170230-053b83016050?w=900'
+  ];
+  localStorage.setItem(MUESTRAS_KEY,JSON.stringify(muestras));
+}
 let cart=JSON.parse(localStorage.getItem('ropa_cart_v2')||'[]');
 let filtroActual='Todos';
 let productoModal=null;
 let talleSeleccionado=null;
 let fotoBase64='';
+let fotoMuestraBase64='';
+let slideIdx=0;
+let slideTimer=null;
 
 function getSheet(){return localStorage.getItem(SHEET_KEY)||''}
 function getWA(){return localStorage.getItem(WA_KEY)||'5492983123456'}
 function getPass(){return localStorage.getItem(PASS_KEY)||'admin123'}
 function fmt(n){return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0}).format(n)}
+
+// CARRUSEL MUESTRAS QUE PASA SOLO
+function renderCarruselMuestras(){
+  const c=document.getElementById('carruselMuestras');
+  const puntos=document.getElementById('puntosMuestras');
+  let imgsHtml='';
+  muestras.forEach((src,i)=>{
+    imgsHtml+=`<img src="${src}" class="${i===slideIdx?'activo':''}" data-i="${i}">`;
+  });
+  c.querySelectorAll('img').forEach(e=>e.remove());
+  c.insertAdjacentHTML('afterbegin',imgsHtml);
+  puntos.innerHTML=muestras.map((_,i)=>`<div class="punto ${i===slideIdx?'activo':''}" onclick="irASlide(${i})"></div>`).join('');
+  reiniciarAuto();
+}
+function irASlide(i){
+  slideIdx=i;
+  if(slideIdx>=muestras.length)slideIdx=0;
+  if(slideIdx<0)slideIdx=muestras.length-1;
+  document.querySelectorAll('#carruselMuestras img').forEach((img,idx)=>img.classList.toggle('activo',idx===slideIdx));
+  document.querySelectorAll('#puntosMuestras .punto').forEach((p,idx)=>p.classList.toggle('activo',idx===slideIdx));
+  reiniciarAuto();
+}
+function moverSlide(d){irASlide(slideIdx+d)}
+function reiniciarAuto(){
+  clearInterval(slideTimer);
+  slideTimer=setInterval(()=>{irASlide(slideIdx+1)},3500);
+}
+// swipe para el celu
+let touchX=0;
+document.getElementById('carruselMuestras').addEventListener('touchstart',e=>{touchX=e.touches[0].clientX},{passive:true});
+document.getElementById('carruselMuestras').addEventListener('touchend',e=>{
+  const diff=touchX-e.changedTouches[0].clientX;
+  if(Math.abs(diff)>40){moverSlide(diff>0?1:-1)}
+},{passive:true});
 
 async function cargarProductos(){
   const url=getSheet();
@@ -162,6 +233,7 @@ async function cargarProductos(){
 }
 
 function renderTodo(){
+  renderCarruselMuestras();
   const cats=['Todos',...new Set(products.map(p=>p.categoria).filter(Boolean))];
   document.getElementById('filtros').innerHTML=cats.map(c=>`<button class="${c===filtroActual?'activo':''}" onclick="filtroActual='${c}';renderTodo()">${c}</button>`).join('');
   const lista=products.filter(p=>filtroActual==='Todos'||p.categoria===filtroActual);
@@ -179,13 +251,8 @@ function renderTodo(){
       </div>
     </div>`;
   }).join('')||'<p style="grid-column:1/-1;text-align:center">Todavía no hay productos. Cargá desde el panel ⚙️</p>';
-  const imgs=lista.slice(0,5).map(p=>p.foto).filter(Boolean);
-  document.getElementById('carrusel').innerHTML=imgs.map((s,i)=>`<img src="${s}" class="${i===0?'activo':''}">`).join('')+`<div class="puntos">${imgs.map((_,i)=>`<div class="punto ${i===0?'activo':''}" onclick="irSlide(${i})"></div>`).join('')}</div>`;
-  window.slideIdx=0;window.slideList=imgs;
-  renderAdminList();actualizarCart();
+  renderAdminList();renderListaMuestras();actualizarCart();
 }
-setInterval(()=>{if(window.slideList&&window.slideList.length>1)irSlide((window.slideIdx+1)%window.slideList.length)},3500);
-function irSlide(i){window.slideIdx=i;document.querySelectorAll('#carrusel img').forEach((img,idx)=>img.classList.toggle('activo',idx===i));document.querySelectorAll('.punto').forEach((p,idx)=>p.classList.toggle('activo',idx===i))}
 
 function abrirModal(id){
   productoModal=products.find(p=>String(p.id)===String(id));
@@ -207,7 +274,6 @@ function agregarDesdeModal(){
   agregarCarrito(productoModal.id, talleSeleccionado);
   cerrarModal();
 }
-
 function agregarCarrito(id, talle){
   const key=id+'_'+talle;
   const it=cart.find(i=>i.key===key);
@@ -239,15 +305,12 @@ function enviarWhatsApp(){
   window.open(`https://wa.me/${getWA()}?text=${msg}`,'_blank');
 }
 
-// PANEL
-function abrirPanel(){document.getElementById('panelModal').classList.add('open');document.getElementById('sheetUrl').value=getSheet();document.getElementById('waNumber').value=getWA();renderAdminList()}
-function cerrarPanel(){document.getElementById('panelModal').classList.remove('open')}
+function abrirPanel(){document.getElementById('panelModal').classList.add('open');document.getElementById('sheetUrl').value=getSheet();document.getElementById('waNumber').value=getWA();renderAdminList();renderListaMuestras()}
 function login(){if(document.getElementById('passInput').value===getPass()){document.getElementById('loginBox').style.display='none';document.getElementById('adminBox').style.display='block'}else alert('Clave incorrecta')}
 function guardarUrl(){localStorage.setItem(SHEET_KEY,document.getElementById('sheetUrl').value.trim());cargarProductos();alert('URL guardada')}
 function guardarWA(){localStorage.setItem(WA_KEY,document.getElementById('waNumber').value.trim());alert('WhatsApp guardado')}
 
-function previsualizarFoto(e){
-  const file=e.target.files[0];if(!file)return;
+function comprimirImagen(file,cb){
   const reader=new FileReader();
   reader.onload=function(ev){
     const img=new Image();
@@ -258,14 +321,49 @@ function previsualizarFoto(e){
       if(w>max){h=h*max/w;w=max}
       canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
-      fotoBase64=canvas.toDataURL('image/jpeg',0.8);
-      document.getElementById('pPreview').src=fotoBase64;
-      document.getElementById('pPreview').style.display='block';
-      document.getElementById('pPreviewText').style.display='none';
+      cb(canvas.toDataURL('image/jpeg',0.8));
     }
     img.src=ev.target.result;
   }
   reader.readAsDataURL(file);
+}
+function previsualizarFoto(e){
+  const file=e.target.files[0];if(!file)return;
+  comprimirImagen(file,function(b64){
+    fotoBase64=b64;
+    document.getElementById('pPreview').src=b64;
+    document.getElementById('pPreview').style.display='block';
+    document.getElementById('pPreviewText').style.display='none';
+  });
+}
+function previsualizarMuestra(e){
+  const file=e.target.files[0];if(!file)return;
+  comprimirImagen(file,function(b64){
+    fotoMuestraBase64=b64;
+    document.getElementById('pPreviewMuestra').src=b64;
+    document.getElementById('pPreviewMuestra').style.display='block';
+    document.getElementById('pPreviewMuestraText').style.display='none';
+  });
+}
+function agregarMuestra(){
+  if(!fotoMuestraBase64)return alert('Primero elegí una foto');
+  muestras.push(fotoMuestraBase64);
+  localStorage.setItem(MUESTRAS_KEY,JSON.stringify(muestras));
+  fotoMuestraBase64='';
+  document.getElementById('muestraFile').value='';
+  document.getElementById('pPreviewMuestra').style.display='none';
+  document.getElementById('pPreviewMuestraText').style.display='block';
+  renderCarruselMuestras();renderListaMuestras();
+  alert('Muestra agregada al carrusel!');
+}
+function renderListaMuestras(){
+  document.getElementById('listaMuestras').innerHTML=muestras.map((m,i)=>`<div class="muestra-thumb"><img src="${m}"><button onclick="borrarMuestra(${i})">✕</button></div>`).join('');
+}
+function borrarMuestra(i){
+  muestras.splice(i,1);
+  localStorage.setItem(MUESTRAS_KEY,JSON.stringify(muestras));
+  if(slideIdx>=muestras.length)slideIdx=0;
+  renderCarruselMuestras();renderListaMuestras();
 }
 
 async function guardarProducto(){
